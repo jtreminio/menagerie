@@ -4,8 +4,11 @@ namespace m {
 
 	class database {
 	
-		public function __construct() {
-		
+		static $config;
+	
+		public function __construct($config=null) {
+			if(!$config) { }
+	
 			return;
 		}
 		
