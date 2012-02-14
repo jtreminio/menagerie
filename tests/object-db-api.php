@@ -1,6 +1,6 @@
 <?php
 
-require('m/application.php');
+require('../m/application.php');
 
 /*// first order of business is to demonstrate extending the
   // frameworks smart object. with it we are going to convert

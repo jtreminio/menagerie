@@ -8,6 +8,8 @@ define('m\timeinit',gettimeofday(true));
   // the project folder organized.
   //*/
 
+set_include_path(dirname(dirname(__FILE__)));
+
 spl_autoload_register(function($classname){
 
 	// this custom autoloader will allow you to load classes from
