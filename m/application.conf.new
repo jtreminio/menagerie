@@ -4,7 +4,7 @@ namespace m {
 	ki::queue('m-init',function(){
 
 	});
-	
+
 	ki::queue('m-config',function(){
 
 		option::set('m-database',array(

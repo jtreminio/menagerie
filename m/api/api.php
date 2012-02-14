@@ -55,7 +55,8 @@ namespace m {
 				}
 			}
 			
-			return json_encode($output);
+			echo json_encode($output);
+			exit(0);
 		}
 
 	}
