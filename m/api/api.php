@@ -11,6 +11,8 @@ and the associated API Key database tables.
 //*/
 
 namespace m {
+	use \m as m;
+	
 	class api {
 	
 		public $mode = 'json';

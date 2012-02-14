@@ -4,21 +4,26 @@ namespace m {
 
 	class database {
 	
-		static $config;
+		static $dbx = array();
 	
-		public function __construct($config=null) {
-			if(!$config) { }
-	
+		public function __construct($which=null) {
+		
+			if(is_array($which) or is_object($which)) {
+				$which = (object)$which;
+								
+			}
+		
+			$config = option::get('m-database');
+			if(!$config or !is_array($config))
+			throw new Exception('database configuration is nowhere near valid');
+
+			
+
 			return;
 		}
 		
 	}
-	
-	ki::queue('zen-setup',function(){
-		database::$config = option::get('m-database');
-		if(!is_array(database::$config)) database::$config = array();
-		return;
-	});
+
 
 }
 
