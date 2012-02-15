@@ -1,6 +1,6 @@
 <?php
 
-require('../m/application.php');
+require(sprintf('%s/m/application.php',dirname(dirname(__FILE__))));
 
 /*// first order of business is to demonstrate extending the
   // frameworks smart object. with it we are going to convert

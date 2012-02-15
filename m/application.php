@@ -3,12 +3,25 @@
 define('m\root',dirname(__FILE__));
 define('m\timeinit',gettimeofday(true));
 
+/*// core library
+  // the lib that goes right round like a record baby right round
+  // round round.
+  //*/
+  
+require(sprintf('%s/application.so.php',m\root));
+
 /*// autoload step one
   // allow subdirectories to be used for the class name to help keep
   // the project folder organized.
   //*/
 
-set_include_path(dirname(dirname(__FILE__)));
+set_include_path(sprintf(
+	// adding the m directory to the include search.
+	'%s%s%s',
+	get_include_path(),
+	PATH_SEPARATOR,
+	dirname(dirname(__FILE__))
+));
 
 spl_autoload_register(function($classname){
 
@@ -66,7 +79,9 @@ spl_autoload_register(function($classname){
   // options and settings.
   //*/
 
-require(sprintf('%s/application.conf.php',m\root));
+$configfile = sprintf('%s/application.conf.php',m\root);
+if(file_exists($configfile))
+require($configfile);
 
 /*// when ready...
   // some things to do once the framework decides it is ready to

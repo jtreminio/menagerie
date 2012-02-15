@@ -24,7 +24,11 @@ namespace m {
 		
 		public function shutdown() {
 			$argv = func_get_args();
-			$output = array('errno'=>0,'errmsg'=>'');
+			$output = array(
+				'errno'=>0,
+				'errmsg'=>'',
+				'mtime'=>0
+			);
 			
 			switch(count($argv)) {
 				case 1: { }
@@ -55,6 +59,7 @@ namespace m {
 				}
 			}
 			
+			$output['mtime'] = m_exec_time();
 			echo json_encode($output);
 			exit(0);
 		}
