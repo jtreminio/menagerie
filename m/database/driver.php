@@ -8,7 +8,7 @@ namespace m\database {
 		protected $config;
 
 		protected function throwError($message) {
-			throw new Exception("{$message} [{$this->name}]");
+			throw new \Exception("{$message} [{$this->name}]");
 		}
 	
 		public function __construct($name,$config) {
