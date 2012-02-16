@@ -14,7 +14,7 @@ planning stage.
 Authors
 --------------------------------
 
- * Bob Majdak Jr <bob@theorangehat.net>
+ * Bob Majdak Jr <bob@theorangehat.net> (@bobmajdakjr)
 
 
 License
