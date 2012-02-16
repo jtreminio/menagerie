@@ -5,8 +5,14 @@ Lightweight PHP 5.3 Namespaced Framework
 
 --------------------------------
 
+Looking for a site, documentation, or a site of documentation? Well
+I do not have one yet this project is still in the "can i do this"
+planning stage.
+
+--------------------------------
+
 Authors:
-	Bob Majdak Jr <bob@opsat.net>
+ * Bob Majdak Jr <bob@theorangehat.net>
 
 
 License
