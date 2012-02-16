@@ -11,7 +11,9 @@ planning stage.
 
 --------------------------------
 
-Authors:
+Authors
+--------------------------------
+
  * Bob Majdak Jr <bob@theorangehat.net>
 
 
