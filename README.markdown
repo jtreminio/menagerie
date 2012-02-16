@@ -3,6 +3,8 @@ Menagerie
 
 Lightweight PHP 5.3 Namespaced Framework
 
+--------------------------------
+
 Authors:
 	Bob Majdak Jr <bob@opsat.net>
 
