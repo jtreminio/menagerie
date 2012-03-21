@@ -31,7 +31,6 @@ namespace m\database {
 	
 	abstract class query {
 
-		abstract public function __construct();
 		abstract public function free();
 		abstract public function next();
 		
