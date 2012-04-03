@@ -69,6 +69,30 @@ namespace {
 		return true;
 	}
 
+	/*// String Utilities
+	  // some string based stuff
+	  //*/
+
+	function m_printfln($fmt) {
+		$argv = func_get_args();
+		unset($argv[0]);
+
+		return vprintf(
+			$fmt.PHP_EOL,
+			$argv
+		);
+	}
+
+	function m_sprintfln($fmt) {
+		$argv = func_get_args();
+		unset($argv[0]);
+
+		return vsprintf(
+			$fmt.PHP_EOL,
+			$argv
+		);
+	}
+
 }
 
 ?>
