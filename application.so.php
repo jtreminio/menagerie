@@ -56,14 +56,22 @@ namespace {
 
 	function m_require($__m_filename,$__m_scope=null) {
 
-		// support some shorthand for referencing files from where the framework
-		// currently resides.
-		if(preg_match('/^-\//',$__m_filename))
-		$__m_filename = preg_replace(
-			'/^-\//',
-			sprintf('%s/',m\root),
-			$__m_filename
-		);
+		// custom loading behaviours first.
+		if(strpos($__m_filename,'-') === 0) {
+
+			// support some shorthand for referencing files from where the framework
+			// currently resides.
+			if(preg_match('/^-\//',$__m_filename)) {
+				$__m_filename = preg_replace(
+					'/^-\//',
+					sprintf('%s/',m\root),
+					$__m_filename
+				);
+			} else if(preg_match('/^-l\h?(.+?)$/',$__m_filename,$match)) {
+				return m_autoloader("m\\{$match[1]}");
+			}
+
+		}
 
 		// check if the file we want exists.
 		if(!file_exists($__m_filename) || !is_readable($__m_filename))

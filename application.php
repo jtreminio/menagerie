@@ -24,7 +24,8 @@ set_include_path(sprintf(
 	dirname(dirname(__FILE__))
 ));
 
-spl_autoload_register(function($classname){
+spl_autoload_register('m_autoloader');
+function m_autoloader($classname){
 
 	// custom menagerie autoloader.
 
@@ -78,8 +79,7 @@ spl_autoload_register(function($classname){
 		return true;
 	}
 
-
-});
+}
 
 
 /*// autoload step two
