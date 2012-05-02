@@ -3,6 +3,9 @@
 namespace m {
 	use \m as m;
 
+	// depends on the platform library for max automation.
+	m_require('-lplatform');
+
 	class surface {
 
 		static $main = null;
@@ -163,6 +166,15 @@ namespace {
 
 	//. start up the auto instance if enabled.
 	m\ki::queue('m-setup',function(){
+
+		// do not automatically capture on output platforms that should by the
+		// very definition of their nature be unsurfaced.
+		switch(m\platform::$main->type) {
+			case 'api': { }
+			case 'bin': { }
+			case 'cli': { return; }
+		}
+
 		if(m\option::get('m-surface-autorun'))
 			m\surface::$main = new m\surface(array(
 				'autocapture' => true
