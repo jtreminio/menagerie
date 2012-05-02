@@ -86,6 +86,11 @@ namespace m {
 			else return false;
 		}
 
+		public function area($area) {
+			$path = dirname($this->getThemePath()).'/area/'.$area.'.phtml';
+			m_require($path);
+		}
+
 		/*// Template Storage Engine API
 		  // these methods will allow you to store data in the surface
 		  // instance for use later when rendering the resulting page.
