@@ -43,21 +43,21 @@ namespace m {
 
 			define_api:
 				$this->api = true;
-				$this->platform = 'api';
+				$this->type = 'api';
 				return;
 
 			define_bin:
 				$this->bin = true;
-				$this->platform = 'bin';
+				$this->type = 'bin';
 				return;			
 
 			define_cli:
 				$this->cli = true;
-				$this->platform = 'cli';
+				$this->type = 'cli';
 				return;
 
 			define_generic:
-				$this->platform = 'generic';
+				$this->type = 'generic';
 				return;
 
 		}
