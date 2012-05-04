@@ -23,4 +23,7 @@ if(hash('sha512',$post->password) !== $user->PHash) {
 
 // user authenticated.
 $user->sessionUpdate();
-die('ding.');
+
+// bye.
+$go = new m\request\redirect('m://home');
+$go->go();

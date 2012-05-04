@@ -5,4 +5,5 @@ require('../../../application.php');
 
 setcookie('m_user','',-1,'/');
 
-die('dong');
+$go = new m\request\redirect('m://home');
+$go->go();
