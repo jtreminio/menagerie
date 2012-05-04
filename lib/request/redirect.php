@@ -59,6 +59,10 @@ namespace m\request {
 					goto DoSelf;
 					break;
 				}
+
+				default: {
+					return;
+				}
 			}
 
 			DoHome:
@@ -75,7 +79,6 @@ namespace m\request {
 					$this->location = $_SERVER['REQUEST_URI'];
 				} else { goto DoHome; }
 
-			return;
 		}
 
 	}
