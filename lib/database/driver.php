@@ -26,6 +26,9 @@ namespace m\database {
 		abstract public function disconnect();
 		abstract public function escape($input);
 		abstract public function query($sql);
+
+		// highly recommended additional methods:
+		// public function id(void); // return the last inserted id.
 	
 	}
 	
@@ -33,7 +36,10 @@ namespace m\database {
 
 		abstract public function free();
 		abstract public function next();
-		
+	
+		// highly recommended additional methods:
+		// public function id(void); // return the last inserted id.
+
 		public function glomp() {
 			$list = array();
 			while($dump = $this->next()) {

@@ -91,14 +91,13 @@ namespace m {
 			
 			return;
 		}
-		
-		
-		public function connect() {
-			return $this->driver->connect();
-		}
-		
-		public function disconnect() {
-			return $this->driver->disconnect();
+
+		public function __call($func,$argv) {
+			if(!method_exists($this->driver,$func))
+				throw new \Exception('requested method not found in driver.');
+
+
+			return call_user_func_array(array($this->driver,$func),$argv);
 		}
 		
 		public function queryf($fmt) {
