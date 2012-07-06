@@ -62,7 +62,7 @@ namespace m\database\drivers\mysql {
 		private $db;
 		private $result;
 	
-		public function __construct($sql,$result) {
+		public function __construct($db,$sql,$result) {
 			if(func_num_args() != 3)
 				throw new Exception('invalid parametre count');
 			else list($this->db,$this->sql,$this->result) = func_get_args();
