@@ -4,7 +4,7 @@ namespace m\database\drivers {
 	use \m as m;
 	
 	class mysqli extends m\database\driver {
-
+		
 		private $dbp = null;
 
 		public function connect() {
@@ -59,14 +59,16 @@ namespace m\database\drivers\mysqli {
 	class query extends m\database\query {
 	
 		public $sql;
-		private $db;
 		private $result;
 	
-		public function __construct($db,$sql,$result) {
+		public function __construct($driver,$sql,$result) {
+			parent::__construct($driver);
+
 			if(func_num_args() != 3)
-				throw new \Exception('invalid parametre count');
-			else list($this->db,$this->sql,$this->result) = func_get_args();
-									
+			throw new \Exception('invalid parametre count');
+			
+			$this->sql = $sql;
+			$this->result = $result;
 			return;
 		}
 		
@@ -77,10 +79,6 @@ namespace m\database\drivers\mysqli {
 			$this->result = null;
 			
 			return true;
-		}
-
-		public function id() {
-			return $this->db->id();
 		}
 		
 		public function next() {
