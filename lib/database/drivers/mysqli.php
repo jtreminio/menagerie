@@ -4,7 +4,7 @@ namespace m\database\drivers {
 	use \m as m;
 	
 	class mysqli extends m\database\driver {
-
+		
 		private $dbp = null;
 
 		public function connect() {
@@ -36,12 +36,16 @@ namespace m\database\drivers {
 		public function escape($input) {
 			return $this->dbp->real_escape_string($input);
 		}
+
+		public function id() {
+			return $this->dbp->insert_id;
+		}
 		
 		public function query($sql) {
 			$result = $this->dbp->query($sql);
 			if(!$result) return false;
 			
-			$query = new mysqli\query($sql,$result);
+			$query = new mysqli\query($this,$sql,$result);
 			return $query;			
 		}
 
@@ -57,11 +61,14 @@ namespace m\database\drivers\mysqli {
 		public $sql;
 		private $result;
 	
-		public function __construct($sql,$result) {
-			if(func_num_args() != 2)
-				throw new Exception('invalid parametre count');
-			else list($this->sql,$this->result) = func_get_args();
-									
+		public function __construct($driver,$sql,$result) {
+			parent::__construct($driver);
+
+			if(func_num_args() != 3)
+			throw new \Exception('invalid parametre count');
+			
+			$this->sql = $sql;
+			$this->result = $result;
 			return;
 		}
 		

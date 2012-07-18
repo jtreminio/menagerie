@@ -91,14 +91,16 @@ namespace m {
 			
 			return;
 		}
-		
-		
-		public function connect() {
-			return $this->driver->connect();
-		}
-		
-		public function disconnect() {
-			return $this->driver->disconnect();
+
+		public function __call($func,$argv) {
+			// function connect();
+			// function disconnect();
+			// ... and anything else not specified but may be provided by drivers.
+
+			if(!method_exists($this->driver,$func))
+				throw new \Exception('requested method not found in driver.');
+
+			return call_user_func_array(array($this->driver,$func),$argv);
 		}
 		
 		public function queryf($fmt) {
@@ -108,7 +110,7 @@ namespace m {
 			/*
 			allow sprintf style use of this method, however all arguments to
 			be subsituted into the final string are escaped automatically.
-			it is intetional that the container (first argument) is not
+			it is intentional that the container (first argument) is not
 			escaped. there will have to be a tutorial to explain how to
 			properly use this method for optimal SQL injection protection.
 			

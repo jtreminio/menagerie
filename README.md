@@ -1,7 +1,7 @@
 Menagerie
 ================================
 
-Lightweight PHP 5.3 Namespaced Framework
+Lightweight PHP 5.4 Namespaced Framework
 
 --------------------------------
 
@@ -14,7 +14,7 @@ planning stage.
 Authors
 --------------------------------
 
- * Bob Majdak Jr <bob@theorangehat.net> (@bobmajdakjr)
+ * Bob Majdak Jr <bob@catch404.net> (@bobmajdakjr)
 
 
 License

@@ -26,14 +26,32 @@ namespace m\database {
 		abstract public function disconnect();
 		abstract public function escape($input);
 		abstract public function query($sql);
+
+		// highly recommended additional methods:
+		// public function id(void); // return the last inserted id.
 	
 	}
 	
 	abstract class query {
 
+		public $driver;
+
 		abstract public function free();
 		abstract public function next();
-		
+
+		public function __construct($driver) {
+			$this->driver = $driver;
+			return;
+		}
+
+		public function __call($func,$argv) {
+			if(method_exists($func,$this->driver))
+			return call_user_func_array(array($this->driver,$func),$argv);
+
+			else
+			return;
+		}
+
 		public function glomp() {
 			$list = array();
 			while($dump = $this->next()) {
