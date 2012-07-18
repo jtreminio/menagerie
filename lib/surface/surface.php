@@ -12,6 +12,7 @@ namespace m {
 
 		public $theme;
 		public $style;
+		public $print = true;
 
 		private $storage = array();
 		private $capturing = false;
@@ -70,9 +71,15 @@ namespace m {
 			$this->stopCapture(true);
 
 			//. run theme.
-			m_require($themepath,array('surface'=>$this));
-
-			return;
+			if($this->print) {
+				m_require($themepath,array('surface'=>$this));
+				return;
+			} else {
+				ob_start();
+				m_require($themepath,array('surface'=>$this));
+				return ob_get_clean();
+			}
+			
 		}
 
 		private function getThemePath() {
