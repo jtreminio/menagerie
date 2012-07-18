@@ -70,7 +70,7 @@ namespace m {
 			$this->stopCapture(true);
 
 			//. run theme.
-			m_require($themepath);
+			m_require($themepath,array('surface'=>$this));
 
 			return;
 		}
@@ -134,7 +134,7 @@ namespace m {
 			//////// ~~~ ////////
 
 			if(array_key_exists($key,$this->storage))
-			echo $this->storage[$key].PHP_EOL;
+			echo $this->storage[$key];
 			return;
 		}
 
