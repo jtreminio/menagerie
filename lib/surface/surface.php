@@ -126,7 +126,7 @@ namespace m {
 			else return null;
 		}
 
-		public function show($key) {
+		public function show($key,$newline=false) {
 			if(!isset($this))
 				if(self::$main) return self::$main->show($key);
 				else return;
@@ -134,7 +134,7 @@ namespace m {
 			//////// ~~~ ////////
 
 			if(array_key_exists($key,$this->storage))
-			echo $this->storage[$key];
+			echo $this->storage[$key], (($newline)?(PHP_EOL):(''));
 			return;
 		}
 
