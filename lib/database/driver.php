@@ -45,7 +45,7 @@ namespace m\database {
 		}
 
 		public function __call($func,$argv) {
-			if(method_exists($func,$this->driver))
+			if(method_exists($this->driver,$func))
 			return call_user_func_array(array($this->driver,$func),$argv);
 
 			else
