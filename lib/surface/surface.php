@@ -8,8 +8,6 @@ namespace m {
 
 	class surface {
 
-		static $main = null;
-
 		public $theme;
 		public $style;
 		public $print = true;
@@ -19,8 +17,8 @@ namespace m {
 
 		public function __construct($input=null) {
 			$opt = new m\object($input,array(
-				'theme'       => option::get('m-surface-theme'),
-				'style'       => option::get('m-surface-style')
+				'theme' => option::get('m-surface-theme'),
+				'style' => option::get('m-surface-style')
 			));
 
 			$this->theme = $opt->theme;
@@ -38,16 +36,16 @@ namespace m {
 		}
 
 		public function startCapture() {
-			if($this->capturing) return;
+			if($this->capturing) return false;
 
 			ob_start();
 			$this->capturing = true;
 
-			return;
+			return true;
 		}
 
 		public function stopCapture($append=true) {
-			if(!$this->capturing) return;
+			if(!$this->capturing) return false;
 
 			$output = ob_get_clean();
 			$this->capturing = false;
@@ -55,7 +53,7 @@ namespace m {
 			if($append)
 			$this->append('stdout',$output);
 			
-			return;
+			return true;
 		}
 
 		public function render() {
@@ -94,62 +92,34 @@ namespace m {
 
 		public function area($area) {
 			$path = dirname($this->getThemePath()).'/area/'.$area.'.phtml';
-			m_require($path);
+			m_require($path,array('surface'=>$this));
+			return;
 		}
 
 		/*// Template Storage Engine API
-		  // these methods will allow you to store data in the surface
-		  // instance for use later when rendering the resulting page.
-		  // they allow for both static and public access. static access
-		  // is for working with a system managed instance, where public
-		  // access is for working on a specific instance.
+		  // come back and comment here again bob.
 		  //*/
 
 		public function append($key,$value) {
-			if(!isset($this))
-				if(self::$main) return self::$main->append($key,$value);
-				else return;
-			
-			//////// ~~~ ////////
-					
 			if(!array_key_exists($key,$this->storage)) $this->storage[$key] = $value;
 			else $this->storage[$key] .= $value;
-		
 			return;
 		}
 
 		public function get($key) {
-			if(!isset($this))
-				if(self::$main) return self::$main->get($key);
-				else return;
-
-			//////// ~~~ ////////
-
 			if(array_key_exists($key,$this->storage)) return $this->storage[$key];
 			else return null;
 		}
 
 		public function show($key,$newline=false) {
-			if(!isset($this))
-				if(self::$main) return self::$main->show($key);
-				else return;
-
-			//////// ~~~ ////////
-
 			if(array_key_exists($key,$this->storage))
 			echo $this->storage[$key], (($newline)?(PHP_EOL):(''));
+
 			return;
 		}
 
 		public function set($key,$value) {
-			if(!isset($this))
-				if(self::$main) return self::$main->set($key,$value);
-				else return;
-
-			//////// ~~~ ////////
-
-			$this->storage[$key] = $value;
-			return;
+			return $this->storage[$key] = $value;
 		}
 
 	}
@@ -180,8 +150,7 @@ namespace {
 		}
 
 		if(m\option::get('m-surface-auto')) {
-			m\surface::$main = $surface = new m\surface;
-			$surface->startCapture();
+			m\stash::set('surface',new m\surface)->startCapture();
 		}
 
 		return;
