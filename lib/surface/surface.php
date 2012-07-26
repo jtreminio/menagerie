@@ -143,7 +143,7 @@ namespace {
 
 		// do not automatically capture on output platforms that should by the
 		// very definition of their nature be unsurfaced.
-		switch(m\platform::$main->type) {
+		switch(m\stash::get('platform')->type) {
 			case 'api': { }
 			case 'bin': { }
 			case 'cli': { return; }
