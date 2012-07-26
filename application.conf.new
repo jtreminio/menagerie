@@ -9,6 +9,7 @@ namespace m {
 
 		option::set('m-database',array(
 			'default' => array(
+				'driver'   => 'mysql',
 				'hostname' => 'localhost',
 				'username' => 'username',
 				'password' => 'password',
@@ -17,8 +18,6 @@ namespace m {
 		));
 
 	});
-
-
 
 }
 
