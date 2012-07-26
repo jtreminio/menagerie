@@ -19,16 +19,12 @@ namespace m {
 
 		public function __construct($input=null) {
 			$opt = new m\object($input,array(
-				'autocapture' => true,
 				'theme'       => option::get('m-surface-theme'),
 				'style'       => option::get('m-surface-style')
 			));
 
 			$this->theme = $opt->theme;
 			$this->style = $opt->style;
-
-			if($opt->autocapture)
-			$this->startCapture();
 
 			return;
 		}
@@ -164,6 +160,7 @@ namespace {
 	//. define default configuration options.
 	m\ki::queue('m-config',function(){
 		m\option::define(array(
+			'm-surface-auto'  => true,
 			'm-surface-theme' => 'default',
 			'm-surface-style' => 'default'
 		));
@@ -182,10 +179,10 @@ namespace {
 			case 'cli': { return; }
 		}
 
-		if(m\option::get('m-surface-autorun'))
-			m\surface::$main = new m\surface(array(
-				'autocapture' => true
-			));
+		if(m\option::get('m-surface-auto')) {
+			m\surface::$main = $surface = new m\surface;
+			$surface->startCapture();
+		}
 
 		return;
 	});
