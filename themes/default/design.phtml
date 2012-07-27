@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>derp</title>
+	<meta charset="utf-8">
+	<title><?php $surface->show('page-title') ?></title>
+	<meta name="description" content="<?php $surface->show('page-description') ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php $surface->uri('design.css') ?>" />
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Dosis:200&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div style="border:1px solid red;">
+
+<img src="<?php $surface->uri('gfx/watermark.png') ?>" id="watermark" alt="Menagerie" />
+
+<div id="construct">
+	<div id="header">
+		<h1><?php echo m\option::get('app-name') ?></h1>
+		<h2>mə-najh-rē &bull; <?php echo m\option::get('app-description-short') ?></h3>
+	</div>
+
+	<div id="main">
 <?php $surface->show('stdout') ?>
+	</div>
+
 </div>
+
 </body>
 </html>
