@@ -90,6 +90,14 @@ namespace m {
 			else return false;
 		}
 
+		private function getThemeURI() {
+			return sprintf(
+				'%s/themes/%s',
+				option::get('m-root-uri'),
+				$this->theme
+			);
+		}
+
 		public function area($area) {
 			$path = dirname($this->getThemePath()).'/area/'.$area.'.phtml';
 			m_require($path,array('surface'=>$this));
@@ -120,6 +128,17 @@ namespace m {
 
 		public function set($key,$value) {
 			return $this->storage[$key] = $value;
+		}
+
+		public function uri($path,$return=false) {
+			$uri = sprintf(
+				'%s/%s',
+				$this->getThemeURI(),
+				$path
+			);
+
+			if($return) return $uri;
+			else echo $uri;
 		}
 
 	}
