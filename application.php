@@ -116,7 +116,22 @@ require($configfile);
   //*/
 
 m\ki::queue('m-ready',function(){
+
+	// attempt to automagically determine the root uri path for the framework
+	// if it was not specified in the config file. setting this will help make
+	// transitions between domain root or subfolders easier on the developer.
+	$rooturi = '/';
+	if(array_key_exists('DOCUMENT_ROOT',$_SERVER)) {
+		list($trash,$rooturi) = explode(
+			m_repath_uri($_SERVER['DOCUMENT_ROOT']),
+			m_repath_uri(dirname(__FILE__))
+		);
+	}
+	m\option::define('m-root-uri',rtrim($rooturi,'/'));
+
+	// lets go.
 	define('m\ready',gettimeofday(true));
+
 	return;
 });
 

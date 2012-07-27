@@ -54,6 +54,14 @@ namespace {
 		return;
 	}
 
+	function m_repath_uri($input) {
+		return str_replace('\\','/',$input);
+	}
+
+	function m_repath_fs($input) {
+		return preg_replace('/[\/\\]/',DIRECTORY_SEPARATOR,$input);
+	}
+
 	function m_require($__m_filename,$__m_scope=null) {
 
 		// custom loading behaviours first.
