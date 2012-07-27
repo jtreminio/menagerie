@@ -82,6 +82,11 @@ namespace m {
 			
 			return;
 		}
+
+		static function only() {
+			$platform = m\stash::get('platform');
+			if(!$platform->cli) exit(0);
+		}
 	
 	}
 
