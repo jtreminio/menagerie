@@ -95,6 +95,13 @@ namespace m {
 					),'- '));
 			}
 
+			if(!$this->has('page-description'))
+				$this->set(
+					'page-description',
+					option::get('app-description-long')
+				);
+
+			return;
 		}
 
 		private function getThemePath() {
