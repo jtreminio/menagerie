@@ -2,12 +2,25 @@
 
 namespace m {
 	ki::queue('m-init',function(){
-
+		m_require('-lsurface');
 	});
 
-	ki::queue('m-config',function(){
+	ki::queue('m-config',function() {
 
+		// application options.
+		// these will be used by default values by libraries such as surface
+		// if you did not specify a page title or whatnot.
+		option::set(array(
+			'app-name'              => 'Menagerie',
+			'app-description-short' => 'Lightweight PHP 5.4 Framework',
+			'app-description-long'  => 'A lightweight framework using all the latest features of PHP 5.4.'
+		));
+
+		// database options.
+		// the database config array. the one named 'default' will be the one
+		// that is connected if you to not specify one to the library.
 		option::set('m-database',array(
+
 			'default' => array(
 				'driver'   => 'mysql',
 				'hostname' => 'localhost',
@@ -15,6 +28,7 @@ namespace m {
 				'password' => 'password',
 				'database' => 'database'
 			)
+
 		));
 
 	});
