@@ -64,6 +64,9 @@ namespace m {
 			if($this->capturing)
 			$this->stopCapture(true);
 
+			//. do some special case stuff now that it is render time.
+			$this->doSpecial();
+
 			//. run theme.
 			if($this->print) {
 				m_require($themepath,array('surface'=>$this));
@@ -74,6 +77,24 @@ namespace m {
 				return ob_get_clean();
 			}
 			
+		}
+
+		private function doSpecial() {
+
+			if(option::get('m-surface-brand-title')) {
+				if($this->has('page-title'))
+					$this->append('page-title',trim(sprintf(
+						' - %s',
+						option::get('app-name')
+					),'- '));
+				else
+					$this->set('page-title',trim(sprintf(
+						'%s - %s',
+						option::get('app-name'),
+						option::get('app-description-short')
+					),'- '));
+			}
+
 		}
 
 		private function getThemePath() {
@@ -119,6 +140,13 @@ namespace m {
 			else return null;
 		}
 
+		public function has($key) {
+			if(array_key_exists($key,$this->storage) && $this->storage[$key])
+				return true;
+			else
+				return false;
+		}
+
 		public function show($key,$newline=false) {
 			if(array_key_exists($key,$this->storage))
 			echo $this->storage[$key], (($newline)?(PHP_EOL):(''));
@@ -149,9 +177,10 @@ namespace {
 	//. define default configuration options.
 	m\ki::queue('m-config',function(){
 		m\option::define(array(
-			'm-surface-auto'  => true,
-			'm-surface-theme' => 'default',
-			'm-surface-style' => 'default'
+			'm-surface-auto'        => true,
+			'm-surface-theme'       => 'default',
+			'm-surface-style'       => 'default',
+			'm-surface-brand-title' => true
 		));
 
 		return;
