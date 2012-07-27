@@ -4,6 +4,15 @@ namespace m {
 	use \m as m;
 
 	class platform {
+	/**
+	 * this class's job is to detect what the output platform the application
+	 * is running on if it had not been explicitly set by the application
+	 * prior to loading the framework.
+	 * 
+	 * an instance of this should be managed by the framework for you to
+	 * access in the stash. should almost never really have a reason to use
+	 * this class yourself.
+	**/
 
 		public $api = false;
 		public $bin = false;
