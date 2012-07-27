@@ -68,7 +68,7 @@ function m_autoloader($classname){
 	// no m/lib/library.php? sadface.
 	if(!file_exists($filepath)) return false;
 	else {
-		require($filepath);
+		require_once($filepath);
 
 		if(defined('m\ready')) {
 			m\ki::flow('m-config');
@@ -115,19 +115,26 @@ require($configfile);
   // proceed with the rest of the application.
   //*/
 
+m\ki::queue('m-init',function(){
+	m_require('-lplatform');
+});
+
 m\ki::queue('m-ready',function(){
+	$platform = m\stash::get('platform');
 
 	// attempt to automagically determine the root uri path for the framework
 	// if it was not specified in the config file. setting this will help make
 	// transitions between domain root or subfolders easier on the developer.
-	$rooturi = '/';
-	if(array_key_exists('DOCUMENT_ROOT',$_SERVER)) {
-		list($trash,$rooturi) = explode(
-			m_repath_uri($_SERVER['DOCUMENT_ROOT']),
-			m_repath_uri(dirname(__FILE__))
-		);
+	if($platform->type != 'cli') {
+		$rooturi = '/';
+		if(array_key_exists('DOCUMENT_ROOT',$_SERVER)) {
+			list($trash,$rooturi) = explode(
+				m_repath_uri($_SERVER['DOCUMENT_ROOT']),
+				m_repath_uri(dirname(__FILE__))
+			);
+		}
+		m\option::define('m-root-uri',rtrim($rooturi,'/'));
 	}
-	m\option::define('m-root-uri',rtrim($rooturi,'/'));
 
 	// lets go.
 	define('m\ready',gettimeofday(true));
