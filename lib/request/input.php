@@ -88,7 +88,7 @@ namespace m\request {
 
 		protected function filter($input) {
 			if($this->opt->trim) $input = trim($input);
-			if($this->opt->pathable) $input = request::makePathable($input,true);
+			if($this->opt->pathable) $input = request::pathable($input,true);
 			return $input;
 		}
 	}
