@@ -5,9 +5,11 @@ Lightweight PHP 5.4 Namespaced Framework
 
 --------------------------------
 
-Looking for a site, documentation, or a site of documentation? Well
-I do not have one yet this project is still in the "can i do this"
-planning stage.
+This project is Pre-Alpha. That means I can change what I want when I
+want and there is nothing you can do about it. Current projections have
+me going Beta (and therefore, being mostly stable) this August.
+
+* http://catch404.net/projects/menagerie/
 
 --------------------------------
 
