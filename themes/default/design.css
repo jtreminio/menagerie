@@ -11,15 +11,19 @@ a:visited {
 	font-weight:bold;
 }
 
-h1,h2,h3,h4 {
+a:active,
+a:hover {
+	color:#fff;
+}
+
+h1,h2,h3,h4,p,ul {
 	display:block;
-	font-weight:normal;
 	margin:0px 0px 16px 0px;
 }
 
 h1 { font-size:3em; }
 h2 { font-size:2em; }
-h2 { font-size:1.5em; }
+h3 { font-size:1.5em;color:#E97276; }
 
 #construct {
 	margin:0px auto;
@@ -40,6 +44,8 @@ body {
 code,pre,tt {
 	font-family: 'Ubuntu Mono', sans-serif;
 }
+
+code { display:block; }
 
 h1,h2,h3,h4,
 .code,
