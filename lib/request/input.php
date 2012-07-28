@@ -11,7 +11,8 @@ namespace m\request {
 
 		public function __construct($which,$opt=null) {
 			$this->opt = new m\object($opt,array(
-				'trim' => false
+				'trim'     => false,
+				'pathable' => false
 			));
 
 			if(!is_array($which)) {
@@ -87,6 +88,7 @@ namespace m\request {
 
 		protected function filter($input) {
 			if($this->opt->trim) $input = trim($input);
+			if($this->opt->pathable) $input = request::makePathable($input,true);
 			return $input;
 		}
 	}
