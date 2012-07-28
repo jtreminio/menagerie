@@ -83,10 +83,10 @@ namespace m {
 
 			if(option::get('m-surface-brand-title')) {
 				if($this->has('page-title'))
-					$this->append('page-title',trim(sprintf(
+					$this->append('page-title',sprintf(
 						' - %s',
 						option::get('app-name')
-					),'- '));
+					));
 				else
 					$this->set('page-title',trim(sprintf(
 						'%s - %s',
