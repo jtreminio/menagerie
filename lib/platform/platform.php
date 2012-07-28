@@ -18,6 +18,8 @@ namespace m {
 		public $bin = false;
 		public $cli = false;
 
+		public $type = null;
+
 		public function __construct() {
 			$this->detect();
 			return;
@@ -30,6 +32,8 @@ namespace m {
 			if(defined('STDIN'))
 			m_define('m\platform','cli');
 
+			$this->type = 'generic';
+
 			// supported application types. libraries may check these to
 			// determine what they should try to do by default depending on
 			// the current platform.
@@ -40,10 +44,6 @@ namespace m {
 				case 'cli': {
 					$this->{m\platform} = true;
 					$this->type = m\platform;
-					break;
-				}
-				default: {
-					$this->type = 'generic';
 					break;
 				}
 			}
