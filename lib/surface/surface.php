@@ -126,6 +126,10 @@ namespace m {
 			);
 		}
 
+		/*// Template Subview
+		  // yeah, subviews. i call them area files.
+		  //*/
+
 		public function area($area) {
 			$path = dirname($this->getThemePath()).'/area/'.$area.'.phtml';
 			m_require($path,array('surface'=>$this));
