@@ -19,6 +19,12 @@
 		<h2>mə-najh-rē &bull; <?php echo m\option::get('app-description-short') ?></h3>
 	</div>
 
+	<ul id="navmenu">
+<?php if(is_array($surface->get('navmenu'))) foreach($surface->get('navmenu') as $item => $uri) { ?>
+		<li><a href="<?php echo $uri ?>"><?php echo $item ?></a></li>
+<?php } ?>
+	</ul>
+
 	<div id="main">
 <?php $surface->show('stdout') ?>
 	</div>
