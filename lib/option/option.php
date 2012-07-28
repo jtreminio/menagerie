@@ -26,7 +26,7 @@ namespace m {
 					self::$storage[$key] = $value;
 				}
 			} else {
-				if(!array_key_exists($key,self::$storage))
+				if(!array_key_exists($argv[0],self::$storage))
 				self::$storage[$argv[0]] = $argv[1];
 			}
 			
