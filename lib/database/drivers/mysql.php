@@ -68,7 +68,12 @@ namespace m\database\drivers\mysql {
 			throw new Exception('invalid parametre count');
 		
 			$this->sql = $sql;
-			$this->result = $result;									
+			$this->result = $result;
+			$this->rows = (($rows = mysql_num_rows($result))?
+				($rows):
+				(mysql_affected_rows($result))
+			);
+							
 			return;
 		}
 		

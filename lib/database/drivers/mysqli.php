@@ -69,6 +69,7 @@ namespace m\database\drivers\mysqli {
 			
 			$this->sql = $sql;
 			$this->result = $result;
+			$this->rows = $result->num_rows;
 			return;
 		}
 		
