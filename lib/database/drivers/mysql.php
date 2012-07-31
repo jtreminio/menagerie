@@ -45,7 +45,7 @@ namespace m\database\drivers {
 			$result = mysql_query($sql);
 			if(!$result) return false;
 			
-			$query = new mysql\query($db,$sql,$result);
+			$query = new mysql\query($this,$sql,$result);
 			return $query;			
 		}
 
