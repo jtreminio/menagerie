@@ -85,7 +85,7 @@ namespace m {
 				throw new \Exception("no driver for {$cfg->driver}");
 			
 			//. check that we can connect.
-			if(!$this->connect()) {
+			if(!$this->connect($cfg)) {
 				throw new \Exception("unable to connect to database {$which}");
 			}
 			

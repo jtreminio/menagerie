@@ -7,18 +7,17 @@ namespace m\database\drivers {
 
 		private $dbp = null;
 
-		public function connect() {
-
+		public function connect($config) {
 			$this->dbp = mysql_connect(
-				$this->config->hostname,
-				$this->config->username,
-				$this->config->password
+				$config->hostname,
+				$config->username,
+				$config->password
 			);
 			
 			if(!$this->dbp)
 			$this->throwError('unable to connect');
 			
-			if(!mysql_select_db($this->config->database,$this->dbp))
+			if(!mysql_select_db($config->database,$this->dbp))
 			$this->throwError("unable to select db {$this->database}");
 		
 			return true;
@@ -46,7 +45,7 @@ namespace m\database\drivers {
 			if(!$result) return false;
 			
 			$query = new mysql\query($this,$sql,$result);
-			return $query;			
+			return $query;
 		}
 
 	}
