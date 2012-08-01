@@ -23,9 +23,9 @@ h1,h2,h3,h4,p,ul {
 
 li { margin-bottom:16px; }
 
-h1 { font-size:3em; }
-h2 { font-size:2em; }
-h3 { font-size:1.5em;color:#E97276; }
+h1 { font-size:2em; }
+h2 { font-size:1.7em; }
+h3 { font-size:1.4em;color:#E97276; }
 
 #construct {
 	margin:0px auto;
@@ -81,6 +81,11 @@ body {
 	border-radius:10px;
 	margin:50px 50px;
 	padding:10px;
+}
+
+#header {
+	overflow:auto;
+	text-align:right;
 }
 
 #navmenu {
