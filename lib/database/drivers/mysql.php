@@ -41,7 +41,7 @@ namespace m\database\drivers {
 		}
 		
 		public function query($sql) {
-			return new mysql\query($this,$sql,$result);;
+			return new mysql\query($this,$sql);;
 		}
 
 	}
@@ -57,10 +57,10 @@ namespace m\database\drivers\mysql {
 		public $rows;
 		private $result;
 	
-		public function __construct($driver,$sql,$result) {
+		public function __construct($driver,$sql) {
 			parent::__construct($driver);
 
-			if(func_num_args() != 3)
+			if(func_num_args() != 2)
 			throw new Exception('invalid parametre count');
 		
 			// store the compiled sql statement so it can be looked at
