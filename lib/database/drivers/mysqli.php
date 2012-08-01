@@ -5,7 +5,7 @@ namespace m\database\drivers {
 	
 	class mysqli extends m\database\driver {
 		
-		private $dbp = null;
+		public $dbp = null;
 
 		public function connect($config) {
 
@@ -42,11 +42,7 @@ namespace m\database\drivers {
 		}
 		
 		public function query($sql) {
-			$result = $this->dbp->query($sql);
-			if(!$result) return false;
-			
-			$query = new mysqli\query($this,$sql,$result);
-			return $query;			
+			return new mysqli\query($this,$sql);
 		}
 
 	}
@@ -61,15 +57,35 @@ namespace m\database\drivers\mysqli {
 		public $sql;
 		private $result;
 	
-		public function __construct($driver,$sql,$result) {
+		public function __construct($driver,$sql) {
 			parent::__construct($driver);
 
-			if(func_num_args() != 3)
+			if(func_num_args() != 2)
 			throw new \Exception('invalid parametre count');
-			
+
+			// store the compiled sql statement so it can be looked at
+			// during debugging or whatnot. might only want to do this if
+			// a debugging constant is set. dunno.
 			$this->sql = $sql;
-			$this->result = $result;
-			$this->rows = $result->num_rows;
+
+			// perform the query against the database.
+			$result = $driver->dbp->query($sql);
+
+			if(!$result) {
+				// in the case that the query failed somehow. malformed
+				// queries tend do this. that's why the sql property
+				// is there.
+				$this->ok = false;
+				$this->result = false;
+				$this->rows = 0;
+			} else {
+				// if the query was successful then we can continue on with
+				// working on the result.
+				$this->ok = true;
+				$this->result = $result;
+				$this->rows = $result->num_rows;
+			}
+
 			return;
 		}
 		

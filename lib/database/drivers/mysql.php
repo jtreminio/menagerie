@@ -5,7 +5,7 @@ namespace m\database\drivers {
 	
 	class mysql extends m\database\driver {
 
-		private $dbp = null;
+		public $dbp = null;
 
 		public function connect($config) {
 			$this->dbp = mysql_connect(
@@ -41,11 +41,7 @@ namespace m\database\drivers {
 		}
 		
 		public function query($sql) {
-			$result = mysql_query($sql);
-			if(!$result) return false;
-			
-			$query = new mysql\query($this,$sql,$result);
-			return $query;
+			return new mysql\query($this,$sql);;
 		}
 
 	}
@@ -58,20 +54,40 @@ namespace m\database\drivers\mysql {
 	class query extends m\database\query {
 	
 		public $sql;
+		public $rows;
 		private $result;
 	
-		public function __construct($driver,$sql,$result) {
+		public function __construct($driver,$sql) {
 			parent::__construct($driver);
 
-			if(func_num_args() != 3)
+			if(func_num_args() != 2)
 			throw new Exception('invalid parametre count');
 		
+			// store the compiled sql statement so it can be looked at
+			// during debugging or whatnot. might only want to do this if
+			// a debugging constant is set. dunno.
 			$this->sql = $sql;
-			$this->result = $result;
-			$this->rows = (($rows = mysql_num_rows($result))?
-				($rows):
-				(mysql_affected_rows($result))
-			);
+
+			// perform the query against the database.
+			$result = mysql_query($sql,$driver->dbp);
+
+			if(!$result) {
+				// in the case that the query failed somehow. malformed
+				// queries tend do this. that's why the sql property
+				// is there.
+				$this->ok = false;
+				$this->result = false;
+				$this->rows = 0;
+			} else {
+				// if the query was successful then we can continue on with
+				// working on the result.
+				$this->ok = true;
+				$this->result = $result;
+				$this->rows = (($rows = mysql_num_rows($result))?
+					($rows):
+					(mysql_affected_rows($result))
+				);
+			}
 							
 			return;
 		}
