@@ -5,6 +5,7 @@ namespace m\database {
 	abstract class query {
 
 		public $driver;
+		public $ok = null;
 
 		abstract public function free();
 		abstract public function next();
@@ -32,5 +33,5 @@ namespace m\database {
 		}
 		
 	}
-	
+
 }
