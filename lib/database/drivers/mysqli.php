@@ -57,7 +57,7 @@ namespace m\database\drivers\mysqli {
 		public $sql;
 		private $result;
 	
-		public function __construct($driver,$sql,$result) {
+		public function __construct($driver,$sql) {
 			parent::__construct($driver);
 
 			if(func_num_args() != 2)
