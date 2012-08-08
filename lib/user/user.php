@@ -315,7 +315,10 @@ namespace m {
 
 			// start a session with the authenticated user.
 			if($user) {
+				$message = m\stash::get('message');
+
 				$user->sessionUpdate();
+				$message->add('You have successfully logged in.');
 
 				// and refresh or go somewhere.
 				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
@@ -368,6 +371,7 @@ namespace m {
 
 namespace m {
 	m_require('-ldatabase');
+	m_require('-lmessage');
 
 	///////////////////////////////////////////////////////////////////////////
 	// library config /////////////////////////////////////////////////////////
