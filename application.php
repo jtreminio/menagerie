@@ -73,7 +73,7 @@ function m_autoloader($classname){
 		if(defined('m\ready')) {
 			m\ki::flow('m-config');
 			m\ki::flow('m-setup');
-			m\ki::flow('m-ready');
+//			m\ki::flow('m-ready');
 		}
 
 		return true;
@@ -91,10 +91,10 @@ function m_autoloader($classname){
 spl_autoload_register(function($classname){
 	spl_autoload($classname);
 
-	if(defined('m\ready') and class_exists($classname)) {
+	if(defined('m\ready') && class_exists($classname)) {
 		m\ki::flow('m-config');
 		m\ki::flow('m-setup');
-		m\ki::flow('m-ready');
+		//m\ki::flow('m-ready');
 	}
 
 	return;
