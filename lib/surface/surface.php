@@ -52,7 +52,7 @@ namespace m {
 
 			if($append)
 			$this->append('stdout',$output);
-			
+
 			return true;
 		}
 
@@ -76,7 +76,7 @@ namespace m {
 				m_require($themepath,array('surface'=>$this));
 				return ob_get_clean();
 			}
-			
+
 		}
 
 		private function doSpecial() {
@@ -210,6 +210,15 @@ namespace {
 
 		if(m\option::get('m-surface-auto')) {
 			m\stash::set('surface',new m\surface)->startCapture();
+
+			// when a browser is told to redirect we need to shut down in
+			// a way that cancels the theme engine properly.
+			m\ki::queue('m-request-redirect',function(){
+				if($surface = m\stash::get('surface')) {
+					$surface->stopCapture(false);
+					m\stash::destroy('surface');
+				}
+			});
 		}
 
 		return;
