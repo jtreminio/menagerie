@@ -14,7 +14,7 @@ namespace m {
 
 		static function has($key) {
 			if(array_key_exists($key,self::$instances)) return true;
-			else return false;	
+			else return false;
 		}
 
 		static function set($key,$obj,$overwrite=false) {
@@ -24,6 +24,15 @@ namespace m {
 			throw new \Exception("already have an object named {$key}");
 
 			return self::$instances[$key] = $obj;
+		}
+
+		static function destroy($key) {
+			if(self::has($key)) {
+				self::$instances[$key]->__destruct();
+				unset(self::$instances[$key]);
+			}
+
+			return;
 		}
 
 	}
