@@ -274,7 +274,10 @@ namespace m {
 		// automatic post handlers ///////////////////////////////////////////
 
 		static function handlerSignup($post) {
+		// handle creating new accounts in the system.
+
 			try {
+				$user = false;
 				$user = self::create(array(
 					'Username' => $post->username,
 					'Password' => $post->password1,
@@ -287,16 +290,19 @@ namespace m {
 				self::handlerException($e);
 			}
 
-			//. log the new user in.
-			$user->sessionUpdate();
-
-			//. and refresh or go somewhere.
-			$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
-			$bye->go();
+			// start a session with our new user.
+			if($user) {
+				$user->sessionUpdate();
+				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
+				$bye->go();
+			}
 		}
 
 		static function handlerLogin($post) {
+		// handle authenticating and starting a user session.
+
 			try {
+				$user = false;
 				$user = self::auth(array(
 					'Account' => $post->account,
 					'Password' => $post->password
@@ -307,26 +313,36 @@ namespace m {
 				self::handlerException($e);
 			}
 
-			// log the user in.
-			$user->sessionUpdate();
+			// start a session with the authenticated user.
+			if($user) {
+				$user->sessionUpdate();
 
-			//. and refresh or go somewhere.
-			$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
-			$bye->go();
+				// and refresh or go somewhere.
+				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
+				$bye->go();
+			}
 		}
 
 		static function handlerLogout($post) {
+		// handle terminating the user session. once destroyed send them back
+		// home.
+
 			$user = m\stash::get('user');
 
 			if($user) {
 				$user->sessionDestroy();
 			}
 
+			// go home.
 			$bye = new m\request\redirect('m://home');
 			$bye->go();
 		}
 
 		static function handlerException($e) {
+		// when any of the POST handlers catch an exception it can be passed
+		// to this, which will decide what type of output platform to render
+		// the error out with.
+
 			$message = sprintf('Error: %s (%d)',$e->getMessage(),$e->getCode());
 
 			switch(m\platform) {
@@ -341,6 +357,8 @@ namespace m {
 					else die($message);
 				}
 			}
+
+			return;
 		}
 
 
