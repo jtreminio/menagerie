@@ -26,6 +26,10 @@ namespace m\request {
 		}
 
 		public function go() {
+			// this ki flow will allow libraries to shut themselves down
+			// early if a page redirect is requested.
+			m\ki::flow('m-request-redirect');
+
 			header("Location: {$this->location}");
 			exit(0); // *wave*
 		}
@@ -46,14 +50,14 @@ namespace m\request {
 				}
 
 				case 'm://back':
-				case 'm://referer': 
+				case 'm://referer':
 				case 'm://referrer': {
 					goto DoBack;
 					break;
 				}
 
 				case 'm://current':
-				case 'm://refresh': 
+				case 'm://refresh':
 				case 'm://reload':
 				case 'm://self': {
 					goto DoSelf;
