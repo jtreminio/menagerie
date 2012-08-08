@@ -333,6 +333,8 @@ namespace m {
 			$user = m\stash::get('user');
 
 			if($user) {
+				$message = m\stash::get('message');
+				$message->add('You have been logged out.');
 				$user->sessionDestroy();
 			}
 
@@ -346,7 +348,7 @@ namespace m {
 		// to this, which will decide what type of output platform to render
 		// the error out with.
 
-			$message = sprintf('Error: %s (%d)',$e->getMessage(),$e->getCode());
+			$text = sprintf('Error: %s (%d)',$e->getMessage(),$e->getCode());
 
 			switch(m\platform) {
 				case 'api': {
@@ -355,9 +357,9 @@ namespace m {
 					break;
 				}
 				default: {
-					$surface = m\stash::get('surface');
-					if($surface) $surface->set('error',$message);
-					else die($message);
+					$message = m\stash::get('message');
+					if($message) $message->add($text,'error');
+					else die($text);
 				}
 			}
 
