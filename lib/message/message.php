@@ -32,12 +32,10 @@ namespace m {
 		//////////////////////////////////////////////////////////////////////
 		// queue manage //////////////////////////////////////////////////////
 
-		public function add($opt) {
-			if(is_string($opt)) { $text = $opt; $opt = null; }
-			else $text = '';
+		public function add($text,$type='notice') {
 
-			$opt = new object($opt,array(
-				'Type' => 'notice',
+			$opt = new object(array(),array(
+				'Type' => $type,
 				'Text' => $text,
 				'ID'   => md5(microtime().rand(0,9001))
 			));
