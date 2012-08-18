@@ -116,6 +116,7 @@ require($configfile);
   //*/
 
 m\ki::queue('m-init',function(){
+	m_require('-llog');
 	m_require('-lplatform');
 	m_require('-lrequest');
 });

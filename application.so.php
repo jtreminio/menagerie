@@ -13,7 +13,7 @@ namespace {
 	  // some small wrapping functions to help make your code a little
 	  // cleaner when dealing with testing constants.
 	  //*/
-	  
+
 	function m_define($const,$value) {
 		if(!defined($const)) {
 			define($const,$value);
@@ -37,20 +37,20 @@ namespace {
 		if(defined($const) && constant($const) === true) return true;
 		else return false;
 	}
-	
+
 	/*// File Utilities
 	  // doing some things with files and the loading of files
 	  //*/
-	  
+
 	function m_load($input) {
 		if(is_string($input))
 		$input = array($input);
-		
+
 		foreach($input as $class) {
 			if(!class_exists($class,true))
 			throw new Exception("unable to load class {$class}");
 		}
-		
+
 		return;
 	}
 
@@ -118,6 +118,16 @@ namespace {
 		);
 	}
 
+}
+
+namespace m {
+	class error extends \Exception {
+
+	}
+
+	class warning {
+
+	}
 }
 
 ?>
