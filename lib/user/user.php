@@ -280,6 +280,14 @@ namespace m {
 
 			try {
 				$user = false;
+
+				if(m\option::get('user-recaptcha-signup')) {
+					$cap = new m\recaptcha;
+					if(!$cap->isValid()) {
+						throw new \Exception('Invalid security code');
+					}
+				}
+
 				$user = self::create(array(
 					'Username' => $post->username,
 					'Password' => $post->password1,
@@ -294,6 +302,9 @@ namespace m {
 
 			// start a session with our new user.
 			if($user) {
+				$message = m\stash::get('message');
+				$message->add('Your account has been created. However there may be usage restrictions until you validate your Email address.','success');
+
 				$user->sessionUpdate();
 				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
 				$bye->go();
@@ -320,7 +331,7 @@ namespace m {
 				$message = m\stash::get('message');
 
 				$user->sessionUpdate();
-				$message->add('You have successfully logged in.');
+				$message->add('You have successfully signed in.','success');
 
 				// and refresh or go somewhere.
 				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
