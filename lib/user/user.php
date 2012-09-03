@@ -15,6 +15,8 @@ namespace m {
 			'u_lname'    => 'LastName'
 		);
 
+		static $NaturalJoins = array();
+
 		private $Database;
 
 		public function __construct($raw,$opt=null) {
@@ -118,6 +120,19 @@ namespace m {
 			//. if no valid data type then quit.
 			if(!$where) return false;
 
+			//. build up the natural joins from the extended whatever.
+			if(count(static::$NaturalJoins)) {
+				$joinlist = array();
+
+				foreach(static::$NaturalJoins as $table => $alias)
+				$joinlist[] = "{$table} {$alias}";
+
+				$join = sprintf('NATURAL JOIN %s',implode(',',$joinlist));
+				unset($table,$alias,$joinlist);
+			} else {
+				$join = '';
+			}
+
 			//. find the record.
 			//. note that i built the query here expecting you to pass probably
 			//. dirty data, so dumping a username from straight post data will
@@ -125,7 +140,7 @@ namespace m {
 			//. can has injection.
 			$db = new m\database($opt->Database);
 			$who = $db->queryf(
-				"SELECT * FROM m_users WHERE {$where} LIMIT 1;",
+				"SELECT * FROM m_users {$join} WHERE {$where} LIMIT 1;",
 				$what
 			)->next();
 
