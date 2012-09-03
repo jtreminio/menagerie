@@ -106,13 +106,14 @@ namespace m {
 
 		private function getThemePath() {
 			$path = sprintf(
-				'%s%sthemes%s%s%sdesign.phtml',
-				m\root,
-				DIRECTORY_SEPARATOR,
+				'%s%s%s%sdesign.phtml',
+				m\option::get('m-surface-theme-path'),
 				DIRECTORY_SEPARATOR,
 				$this->theme,
 				DIRECTORY_SEPARATOR
 			);
+
+			echo $path;
 
 			if(file_exists($path)) return $path;
 			else return false;
@@ -120,8 +121,8 @@ namespace m {
 
 		private function getThemeURI() {
 			return sprintf(
-				'%s/themes/%s',
-				option::get('m-root-uri'),
+				'%s/%s',
+				option::get('m-surface-theme-uri'),
 				$this->theme
 			);
 		}
@@ -191,7 +192,8 @@ namespace {
 			'm-surface-auto'        => true,
 			'm-surface-theme'       => 'default',
 			'm-surface-style'       => 'default',
-			'm-surface-brand-title' => true
+			'm-surface-brand-title' => true,
+			'm-surface-theme-path'  => sprintf('%s%sthemes',m\root,DIRECTORY_SEPARATOR),
 		));
 
 		return;
@@ -207,6 +209,14 @@ namespace {
 			case 'bin': { }
 			case 'cli': { return; }
 		}
+
+		// calculate the theme uri from the theme path.
+		list($trash,$rooturi) = explode(
+			m_repath_uri($_SERVER['DOCUMENT_ROOT']),
+			m_repath_uri(m\option::get('m-surface-theme-path'))
+		);
+		m\option::define('m-surface-theme-uri',$rooturi);
+		unset($rooturi,$trash);
 
 		if(m\option::get('m-surface-auto')) {
 			m\stash::set('surface',new m\surface)->startCapture();

@@ -100,16 +100,6 @@ spl_autoload_register(function($classname){
 	return;
 });
 
-
-/*// load configuration
-  // the application.conf.php file stores all the application specific
-  // options and settings.
-  //*/
-
-$configfile = sprintf('%s/application.conf.php',m\root);
-if(file_exists($configfile))
-require($configfile);
-
 /*// when ready...
   // some things to do once the framework decides it is ready to
   // proceed with the rest of the application.
@@ -121,6 +111,27 @@ m\ki::queue('m-init',function(){
 	m_require('-lrequest');
 });
 
+/*// load configuration
+  // the application.conf.php file stores all the application specific
+  // options and settings.
+  //*/
+
+$configfile = sprintf('%s/application.conf.php',m\root);
+if(file_exists($configfile))
+require($configfile);
+
+// init. things defined in an m-init ki block should be designed for
+// setting or loading values core to the operation of the framework,
+// and are designed to change how it behaves from the ground up.
+// at this point the config file has defined its init block, we have defined
+// our own here. go ahead and flow them both so any super required libraries
+// can get their config and init functions in /before/ the ones below.
+m\ki::flow('m-init');
+
+/*// when configure time...
+  // some things to do once it is time to configure.
+  //*/
+
 m\ki::queue('m-config',function(){
 	m\option::define('m-session-start',true);
 });
@@ -131,15 +142,10 @@ m\ki::queue('m-setup',function(){
 	if(m\option::get('m-session-start'))
 		if(!session_id()) session_start();
 
-});
-
-m\ki::queue('m-ready',function(){
-	$platform = m\stash::get('platform');
-
 	// attempt to automagically determine the root uri path for the framework
 	// if it was not specified in the config file. setting this will help make
 	// transitions between domain root or subfolders easier on the developer.
-	if($platform->type != 'cli') {
+	if(m\platform != 'cli') {
 		$rooturi = '/';
 		if(array_key_exists('DOCUMENT_ROOT',$_SERVER)) {
 			list($trash,$rooturi) = explode(
@@ -150,6 +156,10 @@ m\ki::queue('m-ready',function(){
 		m\option::define('m-root-uri',rtrim($rooturi,'/'));
 	}
 
+});
+
+m\ki::queue('m-ready',function(){
+
 	// lets go.
 	define('m\ready',gettimeofday(true));
 
@@ -159,11 +169,6 @@ m\ki::queue('m-ready',function(){
 /*// init train
   // flow some ki to allow libraries to setup as they need.
   //*/
-
-// init. things defined in an m-init ki block should be designed for
-// setting or loading values core to the operation of the framework,
-// and are designed to change how it behaves from the ground up.
-m\ki::flow('m-init');
 
 // config. things defined in an m-config ki block are for setting
 // values that could be used at any point during an application, but
