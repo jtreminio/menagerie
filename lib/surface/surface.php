@@ -146,8 +146,14 @@ namespace m {
 		}
 
 		public function get($key) {
-			if(array_key_exists($key,$this->storage)) return $this->storage[$key];
-			else return null;
+			if(is_array($key)) {
+				$list = array();
+				foreach($key as $what) $list[] = $this->get($what);
+				return $list;
+			} else {
+				if(array_key_exists($key,$this->storage)) return $this->storage[$key];
+				else return null;
+			}
 		}
 
 		public function has($key) {
