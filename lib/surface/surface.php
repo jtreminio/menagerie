@@ -113,8 +113,6 @@ namespace m {
 				DIRECTORY_SEPARATOR
 			);
 
-			echo $path;
-
 			if(file_exists($path)) return $path;
 			else return false;
 		}
