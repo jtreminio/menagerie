@@ -129,8 +129,10 @@ namespace m {
 				$what
 			)->next();
 
+			$class = m\option::get('user-extended-class');
+
 			if(!$who) return false;
-			else return new static($who,array(
+			else return new $class($who,array(
 				'Database' => $opt->Database,
 				'KeepHashes' => $opt->KeepHashes
 			));
@@ -381,7 +383,8 @@ namespace m {
 		option::define(array(
 			'user-username-length'   => 3,
 			'user-password-length'   => 6,
-			'user-enable-post-hooks' => true
+			'user-enable-post-hooks' => true,
+			'user-extended-class'    => 'm\user'
 		));
 	});
 
