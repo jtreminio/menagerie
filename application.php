@@ -106,6 +106,8 @@ spl_autoload_register(function($classname){
   //*/
 
 m\ki::queue('m-init',function(){
+	if(!session_id()) session_start();
+
 	m_require('-llog');
 	m_require('-lplatform');
 	m_require('-lrequest');
@@ -133,14 +135,10 @@ m\ki::flow('m-init');
   //*/
 
 m\ki::queue('m-config',function(){
-	m\option::define('m-session-start',true);
+
 });
 
 m\ki::queue('m-setup',function(){
-
-	// automatically start up a session if desired and not yet done.
-	if(m\option::get('m-session-start'))
-		if(!session_id()) session_start();
 
 	// attempt to automagically determine the root uri path for the framework
 	// if it was not specified in the config file. setting this will help make
