@@ -59,7 +59,7 @@ namespace {
 	}
 
 	function m_repath_fs($input) {
-		return preg_replace('/[\/\\]/',DIRECTORY_SEPARATOR,$input);
+		return preg_replace('/[\\/\\\\]/',DIRECTORY_SEPARATOR,$input);
 	}
 
 	function m_require($__m_filename,$__m_scope=null) {
