@@ -95,6 +95,21 @@ namespace m {
 		}
 
 		//////////////////////////////////////////////////////////////////////
+		// cache methods /////////////////////////////////////////////////////
+
+		public function cacheUpdate() {
+			appcache::set("user-id-{$this->ID}",$this);
+			appcache::set("user-alias-{$this->Alias}",$this);
+			appcache::set("user-email-{$this->Email}",$this);
+		}
+
+		public function cacheDestroy() {
+			appcache::drop("user-id-{$this->ID}",$this);
+			appcache::drop("user-alias-{$this->Alias}",$this);
+			appcache::drop("user-email-{$this->Email}",$this);
+		}
+
+		//////////////////////////////////////////////////////////////////////
 		// query methods /////////////////////////////////////////////////////
 
 		static function get($what,$opt=null) {
@@ -102,8 +117,27 @@ namespace m {
 
 			$opt = new m\object($opt,array(
 				'KeepHashes' => false,
-				'Database'   => option::get('m-user-database') or null
+				'Database'   => option::get('m-user-database') or null,
+				'ReadCache'  => true,
+				'WriteCache' => true
 			));
+
+			// check the various cache systems before attempting to peg the
+			// database for a user.
+			if($opt->ReadCache) {
+				$user = false;
+
+				// local appcache. has this been asked for before earlier
+				// during the same process?
+				if(strpos($what,'@')!==false) $user = appcache::get("user-email-{$what}");
+				else if(is_string($what)) $user = appcache::get("user-alias-{$what}");
+				else if(is_int($what)) $user = appcache::get("user-id-{$what}");
+
+				if($user) {
+					$user->FromCache = true;
+					return $user;
+				}
+			}
 
 			$where = false;
 			if(strpos($what,'@')!==false) {
@@ -147,10 +181,19 @@ namespace m {
 			$class = m\option::get('user-extended-class');
 
 			if(!$who) return false;
-			else return new $class($who,array(
-				'Database' => $opt->Database,
-				'KeepHashes' => $opt->KeepHashes
-			));
+			else {
+				$user = new $class($who,array(
+					'Database' => $opt->Database,
+					'KeepHashes' => $opt->KeepHashes
+				));
+				$user->FromCache = false;
+
+				// prime the cache if it was told to.
+				if($opt->WriteCache && !$opt->KeepHashes)
+				$user->cacheUpdate();
+
+				return $user;
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////
