@@ -227,12 +227,24 @@ namespace m {
 			$phash = hash('sha512',$input->Password);
 			$psand = hash('sha512',sprintf('%s %d',microtime(),rand(1,9001)));
 
+			if(m\option::get('user-confirm-email')) {
+				$emailhash = md5(microtime(true));
+				// need to send an email here. need to write an email
+				// class first :)
+			} else {
+				$emailhash = 'true';
+			}
+
 			$u_id = $db->queryf(
-				'INSERT INTO m_users (u_alias,u_email,u_phash,u_psand) VALUES ("%s","%s","%s","%s");',
+				'INSERT INTO m_users '.
+				'(u_alias,u_email,u_email_confirm,u_phash,u_psand,u_jtime,u_ltime) '.
+				'VALUES ("%s","%s","%s","%s","%s",%d,0);',
 				$input->Username,
 				$input->Email,
+				$emailhash,
 				$phash,
-				$psand
+				$psand,
+				time()
 			)->id();
 
 			if($u_id) return self::get((int)$u_id,array('KeepHashes'=>true));
