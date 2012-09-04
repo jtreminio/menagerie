@@ -12,7 +12,10 @@ namespace m {
 			'u_phash'    => 'PHash',
 			'u_psand'    => 'PSand',
 			'u_fname'    => 'FirstName',
-			'u_lname'    => 'LastName'
+			'u_lname'    => 'LastName',
+			'u_ltime'    => 'LoginTime',
+			'u_jtime'    => 'JoinTime',
+			'u_admin'    => 'Admin'
 		);
 
 		static $NaturalJoins = array();
@@ -161,7 +164,11 @@ namespace m {
 				foreach(static::$NaturalJoins as $table => $alias)
 				$joinlist[] = "{$table} {$alias}";
 
-				$join = sprintf('NATURAL JOIN %s',implode(',',$joinlist));
+				$join = sprintf(
+					'NATURAL JOIN (%s)',
+					implode(' NATURAL JOIN ',$joinlist)
+				);
+
 				unset($table,$alias,$joinlist);
 			} else {
 				$join = '';
@@ -173,10 +180,11 @@ namespace m {
 			//. still end up being cleaned up by the database library to not
 			//. can has injection.
 			$db = new m\database($opt->Database);
-			$who = $db->queryf(
+			$query = $db->queryf(
 				"SELECT * FROM m_users {$join} WHERE {$where} LIMIT 1;",
 				$what
-			)->next();
+			);
+			$who = $query->next();
 
 			$class = m\option::get('user-extended-class');
 
