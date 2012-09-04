@@ -6,16 +6,17 @@ namespace m {
 	class user extends m\object {
 
 		static $PropertyMap = array(
-			'u_id'       => 'ID',
-			'u_alias'    => 'Alias',
-			'u_email'    => 'Email',
-			'u_phash'    => 'PHash',
-			'u_psand'    => 'PSand',
-			'u_fname'    => 'FirstName',
-			'u_lname'    => 'LastName',
-			'u_ltime'    => 'LoginTime',
-			'u_jtime'    => 'JoinTime',
-			'u_admin'    => 'Admin'
+			'u_id'            => 'ID',
+			'u_alias'         => 'Alias',
+			'u_email'         => 'Email',
+			'u_email_confirm' => 'EmailConfirm',
+			'u_phash'         => 'PHash',
+			'u_psand'         => 'PSand',
+			'u_fname'         => 'FirstName',
+			'u_lname'         => 'LastName',
+			'u_ltime'         => 'LoginTime',
+			'u_jtime'         => 'JoinTime',
+			'u_admin'         => 'Admin'
 		);
 
 		static $NaturalJoins = array();
