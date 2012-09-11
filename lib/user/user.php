@@ -19,9 +19,7 @@ namespace m {
 			'u_admin'         => 'Admin'
 		);
 
-		static $NaturalJoins = array();
-
-		private $Database;
+		public $Database;
 
 		public function __construct($raw,$opt=null) {
 			$opt = new m\object($opt,array(
@@ -158,51 +156,41 @@ namespace m {
 			//. if no valid data type then quit.
 			if(!$where) return false;
 
-			//. build up the natural joins from the extended whatever.
-			if(count(static::$NaturalJoins)) {
-				$joinlist = array();
-
-				foreach(static::$NaturalJoins as $table => $alias)
-				$joinlist[] = "{$table} {$alias}";
-
-				$join = sprintf(
-					'NATURAL JOIN (%s)',
-					implode(' NATURAL JOIN ',$joinlist)
-				);
-
-				unset($table,$alias,$joinlist);
-			} else {
-				$join = '';
-			}
-
 			//. find the record.
 			//. note that i built the query here expecting you to pass probably
 			//. dirty data, so dumping a username from straight post data will
 			//. still end up being cleaned up by the database library to not
 			//. can has injection.
 			$db = new m\database($opt->Database);
-			$query = $db->queryf(
-				"SELECT * FROM m_users {$join} WHERE {$where} LIMIT 1;",
+			$who = $db->queryf(
+				"SELECT * FROM m_users WHERE {$where} LIMIT 1;",
 				$what
-			);
-			$who = $query->next();
+			)->next();
 
-			$class = m\option::get('user-extended-class');
-
+			// if no user was found then stop right here and return a
+			// negative result.
 			if(!$who) return false;
-			else {
-				$user = new $class($who,array(
-					'Database' => $opt->Database,
-					'KeepHashes' => $opt->KeepHashes
-				));
-				$user->FromCache = false;
 
-				// prime the cache if it was told to.
-				if($opt->WriteCache && !$opt->KeepHashes)
+			// else build up a valid user object passing on the options that
+			// were given to this function.
+			$user = new self($who,array(
+				'Database' => $opt->Database,
+				'KeepHashes' => $opt->KeepHashes
+			));
+			$user->FromCache = false;
+
+			// allow the ki to flow that will allow third party libraries to
+			// extend this object. passing a reference to allow third party
+			// libraries to completely replace this instance with their own
+			// conforming one if need be.
+			ki::flow('m-user-get',array(&$user));
+
+			// allow the cache to be primed with the object in its current
+			// state, after any possible extentions.
+			if($opt->WriteCache && !$opt->KeepHashes)
 				$user->cacheUpdate();
 
-				return $user;
-			}
+			return $user;
 		}
 
 		//////////////////////////////////////////////////////////////////////
@@ -473,8 +461,7 @@ namespace m {
 		option::define(array(
 			'user-username-length'   => 3,
 			'user-password-length'   => 6,
-			'user-enable-post-hooks' => true,
-			'user-extended-class'    => 'm\user'
+			'user-enable-post-hooks' => true
 		));
 	});
 
