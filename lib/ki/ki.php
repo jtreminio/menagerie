@@ -7,36 +7,33 @@ namespace m {
 		static $queue = array();
 
 		public $call;
-		public $argv;
 		public $persist;
 
-		public function __construct($call,$argv,$persist=false) {
+		public function __construct($call,$persist=false) {
 
 			if(!is_callable($call))
 			throw new Exception('specified value not callable');
 
-			if(!is_array($argv) || !is_object($argv))
-			$argv = array($argv);
-
 			$this->call = $call;
-			$this->argv = $argv;
 			$this->persist = $persist;
 			$this->alias = md5(microtime().rand(1,1000));
 
 			return;
 		}
 
-		public function exec() {
-			call_user_func_array($this->call,$this->argv);
-			return;
+		public function exec($argv) {
+			return call_user_func_array($this->call,$argv);
 		}
 
-		static function flow($key) {
+		static function flow($key,$argv=null) {
 			if(!array_key_exists($key,self::$queue)) return 0;
+
+			if(!is_array($argv) && !is_object($argv))
+			$argv = array($argv);
 
 			$count = 0;
 			foreach(self::$queue[$key] as $iter => $ki) {
-				$ki->exec();
+				$ki->exec($argv);
 				if(!$ki->persist) {
 					unset(self::$queue[$key][$iter]);
 				}
@@ -46,11 +43,11 @@ namespace m {
 			return $count;
 		}
 
-		static function queue($key,$call,$argv=array(),$persist=false) {
+		static function queue($key,$call,$persist=false) {
 			if(!array_key_exists($key,self::$queue))
 			self::$queue[$key] = array();
 
-			self::$queue[$key][] = new self($call,$argv,$persist);
+			self::$queue[$key][] = new self($call,$persist);
 			return;
 		}
 
