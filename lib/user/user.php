@@ -19,7 +19,7 @@ namespace m {
 			'u_admin'         => 'Admin'
 		);
 
-		public $Database;
+		protected $Database;
 
 		public function __construct($raw,$opt=null) {
 			$opt = new m\object($opt,array(
@@ -171,19 +171,23 @@ namespace m {
 			// negative result.
 			if(!$who) return false;
 
+			// allow an application to extend this class. we will then use
+			// that class name instead of this one. classes should be literal
+			// extentions of this to conform to whatever api i depend on.
+			$class = option::get('user-class-extended');
+			if(!$class) $class = 'm\user';
+
 			// else build up a valid user object passing on the options that
 			// were given to this function.
-			$user = new self($who,array(
+			$user = new $class($who,array(
 				'Database' => $opt->Database,
 				'KeepHashes' => $opt->KeepHashes
 			));
 			$user->FromCache = false;
 
 			// allow the ki to flow that will allow third party libraries to
-			// extend this object. passing a reference to allow third party
-			// libraries to completely replace this instance with their own
-			// conforming one if need be.
-			ki::flow('m-user-get',array(&$user));
+			// modify this object.
+			ki::flow('m-user-get',array($user));
 
 			// allow the cache to be primed with the object in its current
 			// state, after any possible extentions.
