@@ -12,7 +12,7 @@ namespace m {
 		public function __construct($call,$persist=false) {
 
 			if(!is_callable($call))
-			throw new Exception('specified value not callable');
+			throw new \Exception('specified value not callable');
 
 			$this->call = $call;
 			$this->persist = $persist;
