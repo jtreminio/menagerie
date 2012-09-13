@@ -56,9 +56,13 @@ namespace m\request {
 					break;
 				}
 
-				case 'm://current':
 				case 'm://refresh':
-				case 'm://reload':
+				case 'm://reload': {
+					goto DoReload;
+					break;
+				}
+
+				case 'm://current':
 				case 'm://self': {
 					goto DoSelf;
 					break;
@@ -78,9 +82,18 @@ namespace m\request {
 					$this->location = $_SERVER['HTTP_REFERER'];
 				} else { goto DoHome; }
 
-			DoSelf:
+			DoReload:
 				if(array_key_exists('REQUEST_URI',$_SERVER)) {
 					$this->location = $_SERVER['REQUEST_URI'];
+				} else { goto DoHome; }
+
+			DoSelf:
+				if(array_key_exists('REQUEST_URI',$_SERVER)) {
+					if(strpos($_SERVER['REQUEST_URI'],'?')) {
+						list($this->location,$null) = explode('?',$_SERVER['REQUEST_URI']);
+					} else {
+						$this->location = $_SERVER['REQUEST_URI'];
+					}
 				} else { goto DoHome; }
 
 		}
