@@ -9,7 +9,6 @@ namespace m {
 			'u_id'            => 'ID',
 			'u_alias'         => 'Alias',
 			'u_email'         => 'Email',
-			'u_email_confirm' => 'EmailConfirm',
 			'u_phash'         => 'PHash',
 			'u_psand'         => 'PSand',
 			'u_fname'         => 'FirstName',
@@ -19,7 +18,7 @@ namespace m {
 			'u_admin'         => 'Admin'
 		);
 
-		protected $Database;
+		public $Database;
 
 		public function __construct($raw,$opt=null) {
 			$opt = new m\object($opt,array(
@@ -118,10 +117,12 @@ namespace m {
 			if(!$what) return false;
 
 			$opt = new m\object($opt,array(
-				'KeepHashes' => false,
-				'Database'   => option::get('m-user-database') or null,
-				'ReadCache'  => true,
-				'WriteCache' => true
+				'KeepHashes'       => false,
+				'Database'         => option::get('m-user-database') or null,
+				'ReadCache'        => true,
+				'WriteCache'       => true,
+				'ExtendedClass'    => option::get('user-class-extended'),
+				'UseExtendedClass' => true
 			));
 
 			// check the various cache systems before attempting to peg the
@@ -171,14 +172,12 @@ namespace m {
 			// negative result.
 			if(!$who) return false;
 
-			// allow an application to extend this class. we will then use
-			// that class name instead of this one. classes should be literal
-			// extentions of this to conform to whatever api i depend on.
-			$class = option::get('user-class-extended');
-			if(!$class) $class = 'm\user';
-
 			// else build up a valid user object passing on the options that
 			// were given to this function.
+
+			if($opt->UseExtendedClass) $class = $opt->ExtendedClass;
+			else $class = 'm\user';
+
 			$user = new $class($who,array(
 				'Database' => $opt->Database,
 				'KeepHashes' => $opt->KeepHashes
@@ -286,28 +285,27 @@ namespace m {
 			$phash = hash('sha512',$input->Password);
 			$psand = hash('sha512',sprintf('%s %d',microtime(),rand(1,9001)));
 
-			if(m\option::get('user-confirm-email')) {
-				$emailhash = md5(microtime(true));
-				// need to send an email here. need to write an email
-				// class first :)
-			} else {
-				$emailhash = 'true';
-			}
-
 			$u_id = $db->queryf(
 				'INSERT INTO m_users '.
-				'(u_alias,u_email,u_email_confirm,u_phash,u_psand,u_jtime,u_ltime) '.
-				'VALUES ("%s","%s","%s","%s","%s",%d,0);',
+				'(u_alias,u_email,u_phash,u_psand,u_jtime,u_ltime) '.
+				'VALUES ("%s","%s","%s","%s",%d,0);',
 				$input->Username,
 				$input->Email,
-				$emailhash,
 				$phash,
 				$psand,
 				time()
 			)->id();
 
-			if($u_id) return self::get((int)$u_id,array('KeepHashes'=>true));
-			else throw new \Exception("Unknown error creating account.",8);
+			m\ki::flow('m-user-created',array($u_id));
+
+			if($u_id) {
+				return self::get((int)$u_id,array(
+					'KeepHashes'       => true,
+					'UseExtendedClass' => false
+				));
+			} else {
+				throw new \Exception("Unknown error creating account.",8);
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////
@@ -359,7 +357,10 @@ namespace m {
 					}
 				}
 
-				$user = self::create(array(
+				$class = m\option::get('user-class-extended');
+				if(!$class) $class = 'm\user';
+
+				$user = $class::create(array(
 					'Username' => $post->username,
 					'Password' => $post->password1,
 					'PConfirm' => $post->password2,
@@ -374,7 +375,7 @@ namespace m {
 			// start a session with our new user.
 			if($user) {
 				$message = m\stash::get('message');
-				$message->add('Your account has been created. However there may be usage restrictions until you validate your Email address.','success');
+				$message->add('Your account has been created and you have been signed in.','success');
 
 				$user->sessionUpdate();
 				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
