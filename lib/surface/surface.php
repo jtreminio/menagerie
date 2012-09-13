@@ -8,21 +8,27 @@ namespace m {
 
 	class surface {
 
-		public $theme;
-		public $style;
-		public $print = true;
+		public $Theme;
+		public $Style;
+		public $Print;
 
 		private $storage = array();
 		private $capturing = false;
 
 		public function __construct($input=null) {
 			$opt = new m\object($input,array(
-				'theme' => option::get('m-surface-theme'),
-				'style' => option::get('m-surface-style')
+				'Theme' => option::get('m-surface-theme'),
+				'Style' => option::get('m-surface-style'),
+				'Print' => true,
+				'Capture' => false
 			));
 
-			$this->theme = $opt->theme;
-			$this->style = $opt->style;
+			$this->Theme = $opt->Theme;
+			$this->Style = $opt->Style;
+			$this->Print = $opt->Print;
+
+			if($opt->Capture)
+			$this->StartCapture();
 
 			return;
 		}
@@ -58,7 +64,7 @@ namespace m {
 
 		public function render() {
 			$themepath = $this->getThemePath();
-			if(!$themepath) throw new \Exception("theme {$this->theme} not found");
+			if(!$themepath) throw new \Exception("theme {$this->Theme} not found");
 
 			//. get stdout.
 			if($this->capturing)
@@ -68,7 +74,7 @@ namespace m {
 			$this->doSpecial();
 
 			//. run theme.
-			if($this->print) {
+			if($this->Print) {
 				m_require($themepath,array('surface'=>$this));
 				return;
 			} else {
@@ -109,7 +115,7 @@ namespace m {
 				'%s%s%s%sdesign.phtml',
 				m\option::get('m-surface-theme-path'),
 				DIRECTORY_SEPARATOR,
-				$this->theme,
+				$this->Theme,
 				DIRECTORY_SEPARATOR
 			);
 
@@ -121,7 +127,7 @@ namespace m {
 			return sprintf(
 				'%s/%s',
 				option::get('m-surface-theme-uri'),
-				$this->theme
+				$this->Theme
 			);
 		}
 
