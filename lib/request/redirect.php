@@ -84,16 +84,12 @@ namespace m\request {
 
 			DoReload:
 				if(array_key_exists('REQUEST_URI',$_SERVER)) {
-					$this->location = $_SERVER['REQUEST_URI'];
+					$this->location = "{$_SERVER['REQUEST_URI']}?{$_SERVER['QUERY_STRING']}";
 				} else { goto DoHome; }
 
 			DoSelf:
 				if(array_key_exists('REQUEST_URI',$_SERVER)) {
-					if(strpos($_SERVER['REQUEST_URI'],'?')) {
-						list($this->location,$null) = explode('?',$_SERVER['REQUEST_URI']);
-					} else {
-						$this->location = $_SERVER['REQUEST_URI'];
-					}
+					$this->location = $_SERVER['REQUEST_URI'];
 				} else { goto DoHome; }
 
 		}
