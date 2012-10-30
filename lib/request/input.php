@@ -72,17 +72,17 @@ namespace m\request {
 			if(is_array($this->var) AND array_key_exists($key,$this->var)) return true;
 			else	return false;
 		}
-		
+
 		public function itemize() {
 			$list = func_get_args();
 			$output = array();
-			
+
 			foreach($list as $key)
 				if(!is_array($key))
 					$output[$key] = $this->__get($key);
 				else foreach($key as $kkey)
 					$output[$kkey] = $this->__get($kkey);
-	
+
 			return $output;
 		}
 
@@ -91,6 +91,50 @@ namespace m\request {
 			if($this->opt->pathable) $input = m\request::pathable($input,true);
 			return $input;
 		}
+
+		//////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////
+
+		public function GetAsList($key,$mainbreak="\n",$addbreak=false) {
+		/*//
+		This will assume the input for the specific field was to be a list of
+		items that was input with each time on its own line. It will return
+		an array broken up by the new lines, trimming whitespace off both ends
+		of the input data and disregarding any blank lines.
+
+		the mainbreak parameter is the main delimiter that it will use to
+		break up the data. by default it is new line. but you can change it to
+		comma or tab or whatever you want.
+
+		the addbreak parameter will also allow what you specify to break a
+		list up too, like if you want both tabs and commas or something. it
+		should be a valid preg character group. example: "\\t," will allow
+		tabs and commas in addition to the mainbreak.
+		//*/
+
+			// unless there was no data field.
+			if(!$this->Exists($key)) return false;
+			else $input = $this->{$key};
+
+			// if additional delimits was specified turn them into newlines.
+			if($addbreak)
+			$input = preg_replace("/[{$addbreak}]+/",$mainbreak,$input);
+
+			// break up the data into the list.
+			$input = explode($mainbreak,$input);
+
+			// shore up the data and disregard blanks.
+			$output = array();
+			foreach($input as $item) {
+				$item = trim($item);
+
+				if(strlen($item)) $output[] = $item;
+				else continue;
+			}
+
+			return $output;
+		}
+
 	}
 
 }
