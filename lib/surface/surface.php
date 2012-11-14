@@ -380,6 +380,9 @@ class Surface {
 		);
 	}
 
+	///////////////////////////////////////////////////////////////////////////
+	// template subview api ///////////////////////////////////////////////////
+
 	/*//
 	@method public void Area
 	@arg string Filename
@@ -395,46 +398,117 @@ class Surface {
 		return;
 	}
 
-	/*// Template Storage Engine API
-	  // come back and comment here again bob.
-	  //*/
+	///////////////////////////////////////////////////////////////////////////
+	// template storage api ///////////////////////////////////////////////////
 
-	public function append($key,$value) {
-		if(!array_key_exists($key,$this->Storage)) $this->Storage[$key] = $value;
-		else $this->Storage[$key] .= $value;
+	/*//
+	@method public void Append
+	@arg string Key
+	@arg mixed Value
+
+	store data to be used by the template engine under the Key name. you can
+	store any data type you want. just remember if you store an array and then
+	try to Show instead of Get it you are gonna have a bad time.
+	//*/
+
+	public function Append($key,$value) {
+		if(!array_key_exists($key,$this->Storage))
+		$this->Storage[$key] = $value;
+
+		else
+		$this->Storage[$key] .= $value;
+
 		return;
 	}
 
-	public function get($key) {
+	/*//
+	@method public mixed Get
+	@arg mixed Key
+
+	return the data that has been stored in the template storage under the Key
+	name. if the key name is a string you get back the value stored there. if
+	the key is an array list of keys, then you get back an array list of the
+	stored values.
+
+	if the value you wanted has never been stoerd then you get null.
+	//*/
+
+	public function Get($key) {
 		if(is_array($key)) {
 			$list = array();
-			foreach($key as $what) $list[] = $this->get($what);
+			foreach($key as $what) $list[] = $this->Get($what);
 			return $list;
 		} else {
-			if(array_key_exists($key,$this->Storage)) return $this->Storage[$key];
-			else return null;
+			if(array_key_exists($key,$this->Storage))
+			return $this->Storage[$key];
+
+			else
+			return null;
 		}
 	}
 
-	public function has($key) {
+	/*//
+	@method public boolean Has
+	@arg string Key
+
+	a simple check to see if the requested Key has ever been assigned to the
+	surface storage.
+	//*/
+
+	public function Has($key) {
 		if(array_key_exists($key,$this->Storage) && $this->Storage[$key])
-			return true;
+		return true;
+
 		else
-			return false;
+		return false;
 	}
 
-	public function show($key,$newline=false) {
+	/*//
+	@method public void Show
+	@arg string Key
+	@arg boolean NewLine default false
+
+	will attempt to show (echo) the data stored under that Key value. if the
+	NewLine argument is true then an additional new line will be added after.
+	the NewLine argument exists because of odd and sometimes what appears to
+	be inconsistant behaviour on PHP's part after <?php ?>'ing in a template.
+	//*/
+
+	public function Show($key,$newline=false) {
 		if(array_key_exists($key,$this->Storage))
 		echo $this->Storage[$key], (($newline)?(PHP_EOL):(''));
 
 		return;
 	}
 
-	public function set($key,$value) {
+	/*//
+	@method public mixed Set
+	@arg string Key
+	@arg mixed Value
+
+	stores the requested data under the requested key name in the surface
+	storage. also returns the value at the same time.
+	//*/
+
+	public function Set($key,$value) {
 		return $this->Storage[$key] = $value;
 	}
 
-	public function uri($path,$return=false) {
+	///////////////////////////////////////////////////////////////////////////
+	// templaating api ////////////////////////////////////////////////////////
+
+	/*//
+	@method public string URI
+	@arg string Path
+	@arg boolean ReturnValue default false
+
+
+	will attempt to generate a full URI for referencing objects that belong to
+	the theme. for example providing a path of 'gfx/logo.png' may return
+	something like '/m/themes/default/gfx/logo.png' depending on your setup.
+	//*/
+
+	public function URI($path,$return=false) {
 		$uri = sprintf(
 			'%s/%s',
 			$this->getThemeURI(),
