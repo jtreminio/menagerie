@@ -131,6 +131,9 @@ ki::queue('m-setup',function(){
 	return;
 });
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 /*//
 @class Surface
 
@@ -501,7 +504,6 @@ class Surface {
 	@method public string URI
 	@arg string Path
 	@arg boolean ReturnValue default false
-
 
 	will attempt to generate a full URI for referencing objects that belong to
 	the theme. for example providing a path of 'gfx/logo.png' may return
