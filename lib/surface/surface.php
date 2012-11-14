@@ -260,7 +260,7 @@ class Surface {
 		$this->Capturing = false;
 
 		if($append)
-		$this->append('stdout',$output);
+		$this->Append('stdout',$output);
 
 		return true;
 	}
@@ -277,7 +277,7 @@ class Surface {
 	//*/
 
 	public function Render() {
-		$themepath = $this->getThemePath();
+		$themepath = $this->GetThemePath();
 		if(!$themepath) throw new \Exception("theme {$this->Theme} not found");
 
 		// get stdout.
@@ -316,8 +316,8 @@ class Surface {
 			// if data has been stored in page-title we will automatically
 			// append the app-name to the end of it. this is generally a good
 			// thing to do for SEO and whatever.
-			if($this->has('page-title'))
-			$this->append('page-title',sprintf(
+			if($this->Has('page-title'))
+			$this->Append('page-title',sprintf(
 				' - %s',
 				option::get('app-name')
 			));
@@ -337,8 +337,8 @@ class Surface {
 		// generate the page-description
 		// if no page-description has been defined we will use the configured
 		// app-description-long as a default.
-		if(!$this->has('page-description'))
-		$this->set(
+		if(!$this->Has('page-description'))
+		$this->Set(
 			'page-description',
 			option::get('app-description-long')
 		);
@@ -396,7 +396,7 @@ class Surface {
 	//*/
 
 	public function Area($area) {
-		$path = dirname($this->getThemePath()).'/area/'.$area.'.phtml';
+		$path = dirname($this->GetThemePath()).'/area/'.$area.'.phtml';
 		m_require($path,array('surface'=>$this));
 		return;
 	}
@@ -513,7 +513,7 @@ class Surface {
 	public function URI($path,$return=false) {
 		$uri = sprintf(
 			'%s/%s',
-			$this->getThemeURI(),
+			$this->GetThemeURI(),
 			$path
 		);
 
