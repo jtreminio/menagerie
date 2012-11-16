@@ -59,7 +59,9 @@ class Sensei {
 	public function Document() {
 		$blocks = Docblock::GetListFromFile($this->CurrentFile);
 
-		print_r($blocks);
+		foreach($blocks as $block) {
+			m_printfln('=> %s',$block->Type);
+		}
 
 		return;
 	}
