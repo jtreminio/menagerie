@@ -1,5 +1,9 @@
 <?php
 
+/*//
+@namespace m
+//*/
+
 namespace m;
 use \m as m;
 
