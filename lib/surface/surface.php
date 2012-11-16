@@ -2,6 +2,7 @@
 
 /*//
 @namespace m
+@extern
 //*/
 
 namespace m;
@@ -21,8 +22,7 @@ ki::queue('m-config',function(){
 	option::define(array(
 
 		/*//
-		@option boolean surface-auto
-		@default true
+		@option boolean surface-auto default true
 
 		controls if the library should create an instance to manage for you
 		automatically. for "normal web sites" this makes your life easier.
@@ -32,8 +32,7 @@ ki::queue('m-config',function(){
 		'surface-auto' => true,
 
 		/*//
-		@option string surface-theme
-		@default "default"
+		@option string surface-theme default "default"
 
 		the theme which the renderer will attempt to use at shutdown render
 		time. note this does not have to be an HTML template. you could
@@ -43,8 +42,7 @@ ki::queue('m-config',function(){
 		'surface-theme' => 'default',
 
 		/*//
-		@option string surface-style
-		@default "default"
+		@option string surface-style default "default"
 
 		a substyle option for themes. generally only pages will use this
 		for including an additional css file or something to that effect.
@@ -53,8 +51,7 @@ ki::queue('m-config',function(){
 		'surface-style' => 'default',
 
 		/*//
-		@option boolean surface-brand-title
-		@default true
+		@option boolean surface-brand-title default true
 
 		will do its best to nicely rewrite the page-title field to include
 		the site name. (generally thought of as a good SEO practice)
@@ -64,7 +61,6 @@ ki::queue('m-config',function(){
 
 		/*//
 		@option string surface-theme-path
-		@default <>
 
 		this is the local file path to the directory that has the themes
 		you want to use in it. by default this will be similar to...
@@ -79,7 +75,6 @@ ki::queue('m-config',function(){
 
 		/*//
 		@option string surface-theme-uri
-		@default <>
 
 		this is the uri path to the directory that has the themes you want
 		to use in it. it attempts to build itself off a common
