@@ -1,6 +1,13 @@
 <?php
 
 /*//
+@package Surface
+@project Menagerie
+@version 1.0.0
+@author Bob Majdak Jr <bob@theorangehat.net>
+//*/
+
+/*//
 @namespace m
 @extern
 //*/

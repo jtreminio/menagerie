@@ -6,13 +6,14 @@ class GenericTag {
 
 	public $Tag;
 	public $TagContent;
+	public $Value;
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
 	public function __construct($tag,$content) {
 		$this->Tag = $tag;
-		$this->TagContent = $content;
+		$this->TagContent = $this->Value = $content;
 		$this->Parse();
 	}
 

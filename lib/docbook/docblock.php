@@ -5,6 +5,7 @@
 //*/
 
 namespace m\Docbook;
+use \m as m;
 
 /*//
 @class Docblock
@@ -14,7 +15,8 @@ class Docblock {
 
 	protected $Raw;
 
-	public $Type = 'unknown';
+	public $Type;
+	public $Name;
 	public $Tags;
 	public $Text;
 
@@ -22,7 +24,10 @@ class Docblock {
 		$this->Raw = $text;
 
 		$this->PrepareInputText();
-		$this->ParseTagsAndText();
+		$this->ParseTags();
+		$this->ParseText();
+
+		unset($this->Raw);
 
 		return;
 	}
@@ -53,13 +58,14 @@ class Docblock {
 	will parse all the @tags
 	//*/
 
-	protected function ParseTagsAndText() {
+	protected function ParseTags() {
 
 		preg_match_all('/^@([a-zA-Z0-9-]+) (.+?)$/ms',$this->Raw,$match);
 
 		// parse all the tags in this block.
 		$this->Tags = array();
 		foreach($match[1] as $tagiter => $tagname) {
+			$tagname = ucwords(strtolower($tagname));
 			$tclass = $this->GetTagClass($tagname);
 			$this->Tags[] = new $tclass($tagname,$match[2][$tagiter]);
 		}
@@ -68,20 +74,70 @@ class Docblock {
 		// based on them.
 		foreach($this->Tags as $tag) {
 			switch($tag->Tag) {
-				case 'namespace':
-				case 'class':
-				case 'method':
-				case 'property':
-				case 'function':
-				case 'option':
+				case 'Package':
+				case 'Namespace':
+				case 'Class':
+				case 'Method':
+				case 'Property':
+				case 'Function':
+				case 'Option':
 					$this->Type = $tag->Tag;
-					$this->Name = $tag->Name;
+					$this->Name = (property_exists($tag,'Name'))?
+						($tag->Name):
+						($tag->TagContent);
 					break;
 			}
 		}
 
+		// if this docblock had no defined toplevel tags in it then we will
+		// just use the first tag in the block.
+		if(count($this->Tags)) {
+			if(!$this->Type && !$this->Name) {
+				reset($this->Tags);
+				$this->Type = current($this->Tags)->Tag;
+				$this->Name = current($this->Tags)->TagContent;
+			}
+		}
+
+		// although if this block did not even have any tags in it then where
+		// do you go my lovely?
+		else {
+			$this->Type = 'generic';
+			$this->Name = 'comment';
+		}
+
+		$this->Tags = $this->GetTagMap();
+
 		return;
 	}
+
+	/*//
+	@method protected void ParseText
+	@flags internal
+
+	will pull the plain text description out of the comment. currently not
+	planning on reformatting it any, and saying that you should use markdown
+	to format it.
+	//*/
+
+	protected function ParseText() {
+
+		$input = trim(preg_replace('/^@.+?$/ms','',$this->Raw));
+		$input = preg_replace('/\r?\n/',' ',$input);
+		$this->Text = $input;
+
+		return;
+	}
+
+	/*//
+	@method function GetTagClass
+	@arg string TagName
+	@flags internal
+
+	will return the qualified name of the class to use to create an tag
+	object. if no special class is found for a tag type then GenericTag is
+	returned.
+	//*/
 
 	protected function GetTagClass($tagname) {
 		$class = sprintf(
@@ -94,6 +150,33 @@ class Docblock {
 
 		else
 		return $class;
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
+	/*//
+	@method public array GetTagMap
+
+	returns a map of the tags as an associative array, taking into account tags
+	which can occur more than once and subarraying them, etc.
+	//*/
+
+	public function GetTagMap() {
+
+		$map = array();
+
+		foreach($this->Tags as $tag) switch($tag->Tag) {
+			case 'Arg':
+				if(!array_key_exists('Args',$map)) $map['ArgList'] = array();
+				$map['ArgList'][] = $tag;
+				break;
+			default:
+				$map[$tag->Tag] = $tag;
+				break;
+		}
+
+		return new m\Object($map);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
