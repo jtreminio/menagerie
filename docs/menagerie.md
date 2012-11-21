@@ -1,7 +1,7 @@
 Menagerie API Documentation
 ================================================================================
 
-* Last Generated: Wednesday November 21st 2012, 10:46 CST (1353516391)
+* Last Generated: Wednesday November 21st 2012, 11:12 CST (1353517935)
 * By: rarity\bob
 
 
@@ -153,16 +153,16 @@ automatically capture stdout.
 
 ##### m\Surface::CaptureStart
 
-> public boolean CaptureStart(void);
+	public boolean CaptureStart(void);
 
 starts an offscreen buffer for capturing STDOUT.
 
 
 ##### m\Surface::CaptureStop
 
-> public boolean CaptureStop(
->	+ boolean Append = true
-> );
+	public boolean CaptureStop(
+		boolean Append = true
+	);
 
 stops an offscreen buffer. if the Append argument is true then the contents from
 the buffer that was stopped is appended to the internal storage for this surface
@@ -171,7 +171,7 @@ instance. if the Append argument is false then the output is disregarded.
 
 ##### m\Surface::Render
 
-> public void Render(void);
+	public void Render(void);
 
 renders a complete template using the design.phtml as the main container.
 calling this will automatically fetch any STDOUT that may have been captured to
@@ -181,7 +181,7 @@ also passed to the template files and is accessable via the $surface interface.
 
 ##### m\Surface::RenderDoSpecial
 
-> private void RenderDoSpecial(void);
+	private void RenderDoSpecial(void);
 
 perform some special renderings based on options that might have been set. these
 are tasks designed to make templating pages a little nicer.
@@ -189,7 +189,7 @@ are tasks designed to make templating pages a little nicer.
 
 ##### m\Surface::GetThemePath
 
-> private string GetThemePath(void);
+	private string GetThemePath(void);
 
 check that the theme that is requested exists. if it does it returns the full
 filepath to that file. else it returns false.
@@ -197,7 +197,7 @@ filepath to that file. else it returns false.
 
 ##### m\Surface::GetThemeURI
 
-> private string GetThemeURI(void);
+	private string GetThemeURI(void);
 
 returns the uri to the theme directory for use in URI/URLs. if this is
 generating bad prefixes then you may need to tweak surface-theme-path and or
@@ -206,9 +206,9 @@ surface-theme-uri in your config file.
 
 ##### m\Surface::Area
 
-> public void Area(
->	+ string Filename
-> );
+	public void Area(
+		string Filename
+	);
 
 render a template subview from the area folder in a theme. allows you to break
 themes into sections and pull them in as you want them like a box of legos.
@@ -216,9 +216,9 @@ themes into sections and pull them in as you want them like a box of legos.
 
 ##### m\Surface::Append
 
-> public void Append(
->	+ mixed Value
-> );
+	public void Append(
+		mixed Value
+	);
 
 store data to be used by the template engine under the Key name. you can store
 any data type you want. just remember if you store an array and then try to Show
@@ -227,9 +227,9 @@ instead of Get it you are gonna have a bad time.
 
 ##### m\Surface::Get
 
-> public mixed Get(
->	+ mixed Key
-> );
+	public mixed Get(
+		mixed Key
+	);
 
 return the data that has been stored in the template storage under the Key name.
 if the key name is a string you get back the value stored there. if the key is
@@ -240,9 +240,9 @@ if the value you wanted has never been stoerd then you get null.
 
 ##### m\Surface::Has
 
-> public boolean Has(
->	+ string Key
-> );
+	public boolean Has(
+		string Key
+	);
 
 a simple check to see if the requested Key has ever been assigned to the surface
 storage.
@@ -250,9 +250,9 @@ storage.
 
 ##### m\Surface::Show
 
-> public void Show(
->	+ boolean NewLine = false
-> );
+	public void Show(
+		boolean NewLine = false
+	);
 
 will attempt to show (echo) the data stored under that Key value. if the NewLine
 argument is true then an additional new line will be added after. the NewLine
@@ -262,9 +262,9 @@ behaviour on PHP's part after <?php ?>'ing in a template.
 
 ##### m\Surface::Set
 
-> public mixed Set(
->	+ mixed Value
-> );
+	public mixed Set(
+		mixed Value
+	);
 
 stores the requested data under the requested key name in the surface storage.
 also returns the value at the same time.
@@ -272,9 +272,9 @@ also returns the value at the same time.
 
 ##### m\Surface::URI
 
-> public string URI(
->	+ boolean ReturnValue = false
-> );
+	public string URI(
+		boolean ReturnValue = false
+	);
 
 will attempt to generate a full URI for referencing objects that belong to the
 theme. for example providing a path of 'gfx/logo.png' may return something like

@@ -3,6 +3,17 @@
 namespace m\Docbook;
 use \m as m;
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+require_once(m_repath_fs(sprintf(
+	'%s/share/php-markdown-extra/markdown.php',
+	m\root
+)));
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 /*//
 @class Sensei
 
@@ -262,13 +273,22 @@ class Sensei {
 			$this->PrintMarkdownDocumentPackageView($project);
 			$text = ob_get_clean();
 
+			// render text version
 			$filename = sprintf(
 				'%s/%s.md',
 				$this->OutputDirectory,
 				strtolower($project->Name)
 			);
-
 			file_put_contents($filename,$text);
+
+			// render html version
+			$filename = sprintf(
+				'%s/%s.html',
+				$this->OutputDirectory,
+				strtolower($project->Name)
+			);
+			file_put_contents($filename,Markdown($text));
+
 		}
 
 		return;
@@ -448,7 +468,7 @@ class Sensei {
 			// the method.
 			if(!count($method->ArgList)) {
 				m_printfln(
-					'> %s %s %s(void);',
+					"\t%s %s %s(void);",
 					$method->Access,
 					$method->ReturnType,
 					$method->Name
@@ -459,7 +479,7 @@ class Sensei {
 			// prototype of the method.
 			else {
 				m_printfln(
-					'> %s %s %s(',
+					"\t%s %s %s(",
 					$method->Access,
 					$method->ReturnType,
 					$method->Name
@@ -468,15 +488,15 @@ class Sensei {
 				$argstring = array();
 				foreach($method->ArgList as $arg)
 					$argstring[] = sprintf(
-						">\t+ %s %s%s%s",
+						"\t\t%s %s%s%s",
 						$arg->Type,
 						$arg->Name,
 						(($arg->DefaultValue)?(" = {$arg->DefaultValue}"):('')),
 						PHP_EOL
 					);
 
-				m_printfln('%s',trim(join(',',$argstring)));
-				m_printfln('> );');
+				m_printfln('%s',rtrim(join(',',$argstring)));
+				m_printfln("\t);");
 
 			}
 			m_printfln('');
