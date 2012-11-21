@@ -187,7 +187,7 @@ class Docblock {
 
 		foreach($this->Tags as $tag) switch($tag->Tag) {
 			case 'Arg':
-				if(!array_key_exists('Args',$map)) $map['ArgList'] = array();
+				if(!array_key_exists('ArgList',$map)) $map['ArgList'] = array();
 				$map['ArgList'][] = $tag;
 				break;
 			default:

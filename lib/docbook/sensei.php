@@ -556,14 +556,13 @@ class Sensei {
 				$argstring = array();
 				foreach($method->ArgList as $arg)
 					$argstring[] = sprintf(
-						"\t\t%s %s%s%s",
+						"\t\t%s %s%s",
 						$arg->Type,
 						$arg->Name,
-						(($arg->DefaultValue)?(" = {$arg->DefaultValue}"):('')),
-						PHP_EOL
+						(($arg->DefaultValue)?(" = {$arg->DefaultValue}"):(''))
 					);
 
-				m_printfln('%s',rtrim(join(',',$argstring)));
+				m_printfln('%s',join(','.PHP_EOL,$argstring));
 				m_printfln("\t);");
 
 			}
