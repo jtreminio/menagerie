@@ -200,7 +200,7 @@ class Sensei {
 		if(!$ns)
 		throw new \Exception('class hit with no prior namespace block');
 
-		$ns->Classes[$block->Tags->Class->Name] = $class = new ClassItem($block);
+		$ns->Classes[$block->Tags->Class->Name] = $class = new ClassItem($ns,$block);
 
 		return $class;
 	}
@@ -255,13 +255,21 @@ class Sensei {
 
 	public function WriteMarkdownDocument() {
 
-		ob_start();
 		foreach($this->Projects as $project) {
+			ob_start();
 			$this->PrintMarkdownDocumentHeader($project);
 			$this->PrintMarkdownDocumentOverview($project);
 			$this->PrintMarkdownDocumentPackageView($project);
+			$text = ob_get_clean();
+
+			$filename = sprintf(
+				'%s/%s.md',
+				$this->OutputDirectory,
+				strtolower($project->Name)
+			);
+
+			file_put_contents($filename,$text);
 		}
-		echo ob_get_clean();
 
 		return;
 	}
@@ -271,7 +279,7 @@ class Sensei {
 		m_printfln('%s API Documentation',$project->Name);
 		m_printfln(str_repeat('=',80));
 		m_printfln('');
-		m_printfln('* Last Generated: %s',date('Y-m-d H:i'));
+		m_printfln('* Last Generated: %s',date('l F jS Y, H:i T (U)'));
 		m_printfln('* By: %s',trim(`whoami`));
 		m_printfln('');
 		m_printfln('');
@@ -301,7 +309,7 @@ class Sensei {
 
 		foreach($project->Packages as $package) {
 			m_printfln('Package: %s',$package->Name);
-			m_printfln(str_repeat('-',80));
+			m_printfln(str_repeat('=',80));
 			m_printfln('');
 
 			if($package->Text) m_printfln($package->Text);
@@ -319,11 +327,12 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentPackageOptions($package) {
 
-		m_printfln('### Options');
+		m_printfln('Options');
+		m_printfln(str_repeat('-',80));
 		m_printfln('');
 
 		foreach($package->Options as $option) {
-			m_printfln('#### %s',$option->Name);
+			m_printfln('### %s',$option->Name);
 			m_printfln('');
 			m_printfln(' - Type: %s',$option->Type);
 			m_printfln(' - Default: %s',(($option->DefaultValue)?($option->DefaultValue):('_None_')));
@@ -341,11 +350,145 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentPackageNamespaces($package) {
 
-		foreach($package->Namespaces as $namespace) {
-			m_printfln('=== Namespace %s',$namespace->Name);
+		m_printfln('Classes');
+		m_printfln(str_repeat('-',80));
+		m_printfln('');
+
+		foreach($package->Namespaces as $namespace)
+		$this->PrintMarkdownDocumentNamespaceClasses($namespace);
+
+		m_printfln('');
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentNamespaceClasses($ns) {
+
+		if(!count($ns->Classes)) {
+			m_printfln('**None**');
+			m_printfln('');
+			return;
+		}
+
+		foreach($ns->Classes as $class) {
+			m_printfln('### %s\%s',$class->Namespace,$class->Name);
+			m_printfln('');
+			m_printfln('%s',(($class->Text)?
+				(wordwrap($class->Text,80)):
+				('*No Class Description*'))
+			);
+			m_printfln('');
+
+			$this->PrintMarkdownDocumentClassProperties($class);
+			$this->PrintMarkdownDocumentClassMethods($class);
+
 		}
 
 		m_printfln('');
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentClassProperties($class) {
+
+		m_printfln('#### Properties');
+		m_printfln('');
+
+		if(!count($class->Properties)) {
+			m_printfln('**None**');
+			m_printfln('');
+			return;
+		}
+
+		foreach($class->Properties as $property) {
+			m_printfln(
+				'##### %s\%s::%s',
+				$class->Namespace,
+				$class->Name,
+				$property->Name
+			);
+			m_printfln('');
+			m_printfln(' - Access: %s',$property->Access);
+			m_printfln(' - Type: %s',$property->Type);
+			m_printfln('');
+
+			if($property->Text) {
+				m_printfln('%s',wordwrap($property->Text,80));
+				m_printfln('');
+			}
+
+			m_printfln('');
+		}
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentClassMethods($class) {
+
+		m_printfln('#### Methods');
+		m_printfln('');
+
+		if(!count($class->Methods)) {
+			m_printfln('**None**');
+			m_printfln('');
+			return;
+		}
+
+		foreach($class->Methods as $method) {
+
+			m_printfln(
+				'##### %s\%s::%s',
+				$class->Namespace,
+				$class->Name,
+				$method->Name
+			);
+			m_printfln('');
+
+			// if the method has no arguments print a one line prototype of
+			// the method.
+			if(!count($method->ArgList)) {
+				m_printfln(
+					'> %s %s %s(void);',
+					$method->Access,
+					$method->ReturnType,
+					$method->Name
+				);
+			}
+
+			// if the method does have arguments then print a multiline
+			// prototype of the method.
+			else {
+				m_printfln(
+					'> %s %s %s(',
+					$method->Access,
+					$method->ReturnType,
+					$method->Name
+				);
+
+				$argstring = array();
+				foreach($method->ArgList as $arg)
+					$argstring[] = sprintf(
+						">\t+ %s %s%s%s",
+						$arg->Type,
+						$arg->Name,
+						(($arg->DefaultValue)?(" = {$arg->DefaultValue}"):('')),
+						PHP_EOL
+					);
+
+				m_printfln('%s',trim(join(',',$argstring)));
+				m_printfln('> );');
+
+			}
+			m_printfln('');
+
+
+			if($method->Text) {
+				m_printfln('%s',wordwrap($method->Text,80));
+				m_printfln('');
+			}
+
+			m_printfln('');
+		}
 
 		return;
 	}

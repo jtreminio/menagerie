@@ -135,7 +135,7 @@ class Docblock {
 		$input = preg_replace('/<sensei nl \/>/ms',PHP_EOL.PHP_EOL,$input);
 
 		// give lists in comments more kick.
-		$input = preg_replace('/^([\+\*\-])/ms',"\t\\1",$input);
+		$input = preg_replace('/^([\+\*\-])/ms'," \\1",$input);
 
 
 		$this->Text = $input;

@@ -29,5 +29,6 @@ foreach($filelist as $file) {
 	$sensei->SetFilename($file);
 
 	$sensei->Document();
-	$sensei->WriteMarkdownDocument();
 }
+
+$sensei->WriteMarkdownDocument();
