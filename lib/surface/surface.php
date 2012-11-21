@@ -88,12 +88,12 @@ ki::queue('m-config',function(){
 		understanding of how filepaths and basic web configurations work.
 
 		* IF your site root is http://whatever.com/
-		  AND surface-theme-path is /var/www/whatever.com/m/themes
-		  THEN surface-theme-uri = /m/themes
+		* AND surface-theme-path is /var/www/whatever.com/m/themes
+		* THEN surface-theme-uri = /m/themes
 
 		* IF your site root is http://whatever.com/zomg/bbq/
-		  AND surface-theme-path is /var/www/whatever.com/m/themes
-		  THEN surface-theme-uri = /zomg/bbq/m/themes
+		* AND surface-theme-path is /var/www/whatever.com/m/themes
+		* THEN surface-theme-uri = /zomg/bbq/m/themes
 		//*/
 
 		'surface-theme-uri' => str_replace(

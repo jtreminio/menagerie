@@ -123,9 +123,22 @@ class Docblock {
 	protected function ParseText() {
 
 		$input = trim(preg_replace('/^@.+?$/ms','',$this->Raw));
-		$input = preg_replace('/\r?\n/',' ',$input);
-		$this->Text = $input;
 
+		// convert double new lines into something unique.
+		$input = preg_replace('/(?:\r?\n){2}/ms','<sensei nl />',$input);
+
+		// then convert all new lines that appear to continue a paragraph into
+		// nothings.
+		$input = preg_replace('/\r?\n([a-zA-Z0-9])/',' \1',$input);
+
+		// then turn the double new lines back.
+		$input = preg_replace('/<sensei nl \/>/ms',PHP_EOL.PHP_EOL,$input);
+
+		// give lists in comments more kick.
+		$input = preg_replace('/^([\+\*\-])/ms',"\t\\1",$input);
+
+
+		$this->Text = $input;
 		return;
 	}
 

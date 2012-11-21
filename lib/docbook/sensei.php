@@ -137,7 +137,7 @@ class Sensei {
 
 		// create or get the package this package is.
 		if(!array_key_exists($tags->Package->Value,$project->Packages))
-		$project->Packages[$tags->Package->Value] = new PackageItem($tags->Package->Value);
+		$project->Packages[$tags->Package->Value] = new PackageItem($block);
 
 			$package = $project->Packages[$tags->Package->Value];
 
@@ -247,22 +247,105 @@ class Sensei {
 	///////////////////////////////////////////////////////////////////////////
 
 	/*//
-	@method public void WriteMarkupDocument
+	@method public void WriteMarkdownDocument
 
 	this will write a really nice file documenting the entire project using
 	markup syntax. protip: make your comments markup.
 	//*/
 
-	public function WriteMarkupDocument() {
+	public function WriteMarkdownDocument() {
 
 		ob_start();
-		$this->PrintMarkupDocumentHeader();
+		foreach($this->Projects as $project) {
+			$this->PrintMarkdownDocumentHeader($project);
+			$this->PrintMarkdownDocumentOverview($project);
+			$this->PrintMarkdownDocumentPackageView($project);
+		}
 		echo ob_get_clean();
 
 		return;
 	}
 
-	protected function PrintMarkupDocumentHeader() {
+	protected function PrintMarkdownDocumentHeader($project) {
+
+		m_printfln('%s API Documentation',$project->Name);
+		m_printfln(str_repeat('=',80));
+		m_printfln('');
+		m_printfln('* Last Generated: %s',date('Y-m-d H:i'));
+		m_printfln('* By: %s',trim(`whoami`));
+		m_printfln('');
+		m_printfln('');
+		m_printfln('');
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentOverview($project) {
+
+		m_printfln('Packages in this Project');
+		m_printfln(str_repeat('=',80));
+		m_printfln('');
+
+		foreach($project->Packages as $package) {
+			m_printfln('* %s',$package->Name);
+		}
+
+		m_printfln('');
+		m_printfln('');
+		m_printfln('');
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentPackageView($project) {
+
+		foreach($project->Packages as $package) {
+			m_printfln('Package: %s',$package->Name);
+			m_printfln(str_repeat('-',80));
+			m_printfln('');
+
+			if($package->Text) m_printfln($package->Text);
+			else m_printfln('**No Package Description**');
+			m_printfln('');
+
+			$this->PrintMarkdownDocumentPackageOptions($package);
+			$this->PrintMarkdownDocumentPackageNamespaces($package);
+		}
+
+		m_printfln('');
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentPackageOptions($package) {
+
+		m_printfln('### Options');
+		m_printfln('');
+
+		foreach($package->Options as $option) {
+			m_printfln('#### %s',$option->Name);
+			m_printfln('');
+			m_printfln(' - Type: %s',$option->Type);
+			m_printfln(' - Default: %s',(($option->DefaultValue)?($option->DefaultValue):('_None_')));
+			m_printfln('');
+			m_printfln('%s',wordwrap($option->Text,80));
+			m_printfln('');
+			m_printfln('');
+		}
+
+		m_printfln('');
+
+
+		return;
+	}
+
+	protected function PrintMarkdownDocumentPackageNamespaces($package) {
+
+		foreach($package->Namespaces as $namespace) {
+			m_printfln('=== Namespace %s',$namespace->Name);
+		}
+
+		m_printfln('');
 
 		return;
 	}
