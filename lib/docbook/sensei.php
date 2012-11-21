@@ -1,5 +1,15 @@
 <?php
 
+/*//
+@package Docbook
+@project Menagerie
+@version 1.0.0
+@author Bob Majdak Jr <bob@theorangehat.net>
+//*/
+
+/*//
+@namespace m\Docbook
+//*/
 namespace m\Docbook;
 use \m as m;
 
@@ -258,10 +268,80 @@ class Sensei {
 	///////////////////////////////////////////////////////////////////////////
 
 	/*//
+	@method public void Sort
+
+	will sort the entire documentation tree alphabetical.
+	//*/
+
+	public function Sort() {
+
+		// sort projects.
+		ksort($this->Projects);
+
+		// sort packages.
+		foreach($this->Projects as $proj) {
+			ksort($proj->Packages);
+
+		// sort package namespaces and options.
+		foreach($proj->Packages as $pkg) {
+			ksort($pkg->Namespaces);
+			ksort($pkg->Options);
+
+		// sort namespace classes and functions.
+		foreach($pkg->Namespaces as $ns) {
+			ksort($ns->Classes);
+			ksort($ns->Functions);
+			ksort($ns->Constants);
+
+		// sort class methods and properties.
+		foreach($ns->Classes as $class) {
+			ksort($class->Methods);
+			ksort($class->Properties);
+
+		} } } }
+
+		return;
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
+	public function PrintTextHeaderBlock($text,$char='=') {
+
+		$string = sprintf(
+			'%s %s ',
+			str_repeat($char,2),
+			$text
+		);
+
+		// fill the line.
+		$string .= str_repeat($char,(80-strlen($string))).PHP_EOL.PHP_EOL;
+
+		// overbar.
+		$string = str_repeat($char,80).PHP_EOL.$string;
+
+		echo $string;
+	}
+
+	public function PrintTextHeaderBar($text,$char='=') {
+
+		$string = sprintf(
+			'%s %s ',
+			str_repeat($char,2),
+			$text
+		);
+
+		// fill the line.
+		$string .= str_repeat($char,(80-strlen($string))).PHP_EOL.PHP_EOL;
+
+		echo $string;
+	}
+
+	/*//
 	@method public void WriteMarkdownDocument
 
-	this will write a really nice file documenting the entire project using
-	markup syntax. protip: make your comments markup.
+	this will write a really nice file documenting the entire project. the
+	method names are currently misleading as i decided to drop markdown.
 	//*/
 
 	public function WriteMarkdownDocument() {
@@ -275,19 +355,21 @@ class Sensei {
 
 			// render text version
 			$filename = sprintf(
-				'%s/%s.md',
+				'%s/%s.txt',
 				$this->OutputDirectory,
 				strtolower($project->Name)
 			);
 			file_put_contents($filename,$text);
 
 			// render html version
+			/*
 			$filename = sprintf(
 				'%s/%s.html',
 				$this->OutputDirectory,
 				strtolower($project->Name)
 			);
 			file_put_contents($filename,Markdown($text));
+			*/
 
 		}
 
@@ -296,13 +378,10 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentHeader($project) {
 
-		m_printfln('%s API Documentation',$project->Name);
-		m_printfln(str_repeat('=',80));
-		m_printfln('');
+		$this->PrintTextHeaderBlock("{$project->Name} API Documentation",'#');
+
 		m_printfln('* Last Generated: %s',date('l F jS Y, H:i T (U)'));
 		m_printfln('* By: %s',trim(`whoami`));
-		m_printfln('');
-		m_printfln('');
 		m_printfln('');
 
 		return;
@@ -310,9 +389,7 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentOverview($project) {
 
-		m_printfln('Packages in this Project');
-		m_printfln(str_repeat('=',80));
-		m_printfln('');
+		$this->PrintTextHeaderBlock('Package Listing');
 
 		foreach($project->Packages as $package) {
 			m_printfln('* %s',$package->Name);
@@ -328,9 +405,7 @@ class Sensei {
 	protected function PrintMarkdownDocumentPackageView($project) {
 
 		foreach($project->Packages as $package) {
-			m_printfln('Package: %s',$package->Name);
-			m_printfln(str_repeat('=',80));
-			m_printfln('');
+			$this->PrintTextHeaderBlock("Package: {$package->Name}",'#');
 
 			if($package->Text) m_printfln($package->Text);
 			else m_printfln('**No Package Description**');
@@ -347,13 +422,17 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentPackageOptions($package) {
 
-		m_printfln('Options');
-		m_printfln(str_repeat('-',80));
-		m_printfln('');
+		$this->PrintTextHeaderBlock('Options','/');
+
+		if(!count($package->Options)) {
+			m_printfln('None');
+			m_printfln('');
+			return;
+		}
 
 		foreach($package->Options as $option) {
-			m_printfln('### %s',$option->Name);
-			m_printfln('');
+			$this->PrintTextHeaderBlock($option->Name,'-');
+
 			m_printfln(' - Type: %s',$option->Type);
 			m_printfln(' - Default: %s',(($option->DefaultValue)?($option->DefaultValue):('_None_')));
 			m_printfln('');
@@ -370,12 +449,14 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentPackageNamespaces($package) {
 
-		m_printfln('Classes');
-		m_printfln(str_repeat('-',80));
-		m_printfln('');
-
+		$this->PrintTextHeaderBlock('Namespaces Provided','/');
 		foreach($package->Namespaces as $namespace)
-		$this->PrintMarkdownDocumentNamespaceClasses($namespace);
+			m_printfln('* %s',$namespace->Name);
+
+		m_printfln('');
+		$this->PrintTextHeaderBlock('Classes','/');
+		foreach($package->Namespaces as $namespace)
+			$this->PrintMarkdownDocumentNamespaceClasses($namespace);
 
 		m_printfln('');
 
@@ -385,14 +466,14 @@ class Sensei {
 	protected function PrintMarkdownDocumentNamespaceClasses($ns) {
 
 		if(!count($ns->Classes)) {
-			m_printfln('**None**');
+			m_printfln('None');
 			m_printfln('');
 			return;
 		}
 
 		foreach($ns->Classes as $class) {
-			m_printfln('### %s\%s',$class->Namespace,$class->Name);
-			m_printfln('');
+			$this->PrintTextHeaderBlock("{$ns->Name}\\{$class->Name}",'=');
+
 			m_printfln('%s',(($class->Text)?
 				(wordwrap($class->Text,80)):
 				('*No Class Description*'))
@@ -411,23 +492,17 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentClassProperties($class) {
 
-		m_printfln('#### Properties');
-		m_printfln('');
+		$this->PrintTextHeaderBar('Properties','=');
 
 		if(!count($class->Properties)) {
-			m_printfln('**None**');
+			m_printfln('None');
 			m_printfln('');
 			return;
 		}
 
 		foreach($class->Properties as $property) {
-			m_printfln(
-				'##### %s\%s::%s',
-				$class->Namespace,
-				$class->Name,
-				$property->Name
-			);
-			m_printfln('');
+			$this->PrintTextHeaderBlock("{$class->Namespace}\\{$class->Name}::{$property->Name}",'-');
+
 			m_printfln(' - Access: %s',$property->Access);
 			m_printfln(' - Type: %s',$property->Type);
 			m_printfln('');
@@ -445,24 +520,17 @@ class Sensei {
 
 	protected function PrintMarkdownDocumentClassMethods($class) {
 
-		m_printfln('#### Methods');
-		m_printfln('');
+		$this->PrintTextHeaderBar('Methods','=');
 
 		if(!count($class->Methods)) {
-			m_printfln('**None**');
+			m_printfln('None');
 			m_printfln('');
 			return;
 		}
 
 		foreach($class->Methods as $method) {
 
-			m_printfln(
-				'##### %s\%s::%s',
-				$class->Namespace,
-				$class->Name,
-				$method->Name
-			);
-			m_printfln('');
+			$this->PrintTextHeaderBlock("{$class->Namespace}\\{$class->Name}::{$method->Name}",'-');
 
 			// if the method has no arguments print a one line prototype of
 			// the method.

@@ -1,6 +1,12 @@
 <?php
 
 /*//
+@package Docbook
+@project Menagerie
+@version 1.0.0
+//*/
+
+/*//
 @namespace m\Docbook
 //*/
 
@@ -143,7 +149,7 @@ class Docblock {
 	}
 
 	/*//
-	@method function GetTagClass
+	@method protected function GetTagClass
 	@arg string TagName
 	@flags internal
 

@@ -1,1 +1,3 @@
-m/lib/surface/surface.php
+m/lib/surface/*.php
+m/lib/docbook/*.php
+m/lib/docbook/Tags/*.php

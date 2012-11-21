@@ -14,10 +14,10 @@ class MethodTag extends GenericTag {
 			'/^(public|protected|private|static) ([^\h]+) (.+?)$/',
 			$this->TagContent,
 			$match
-		)) throw new Exception(sprintf(
+		)) throw new Exception(
 			'@method access return-type name',
 			$this
-		));
+		);
 
 		$this->Access = $match[1];
 		$this->ReturnType = $match[2];
