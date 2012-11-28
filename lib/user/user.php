@@ -180,8 +180,6 @@ namespace m {
 			else
 			$class = 'm\user';
 
-			var_dump($class);
-
 			$user = new $class($who,array(
 				'Database' => $opt->Database,
 				'KeepHashes' => $opt->KeepHashes
