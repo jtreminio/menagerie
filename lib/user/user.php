@@ -175,8 +175,12 @@ namespace m {
 			// else build up a valid user object passing on the options that
 			// were given to this function.
 
-			if($opt->UseExtendedClass) $class = $opt->ExtendedClass;
-			else $class = 'm\user';
+			if($opt->UseExtendedClass && $opt->ExtendedClass)
+			$class = $opt->ExtendedClass;
+			else
+			$class = 'm\user';
+
+			var_dump($class);
 
 			$user = new $class($who,array(
 				'Database' => $opt->Database,
