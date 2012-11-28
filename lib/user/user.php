@@ -475,6 +475,23 @@ namespace m {
 	ki::queue('m-setup',function(){
 		stash::set('user',($user = user::getFromSession()));
 
+		//////////////////////////////////////////////////////////////////////
+
+		// allow integration with the surface library to provide automatic
+		// scope into the theme engine, but only if the theme engine is
+		// already loaded. we do not want this test to autoload it. it expects
+		// a reference to the scope array that we need to add elements to.
+
+		if(class_exists('\m\surface',false))
+		ki::queue('surface-build-render-scope',function(&$scope){
+			if(!array_key_exists('user',$scope))
+			$scope['user'] = stash::get('user');
+
+			return;
+		});
+
+		//////////////////////////////////////////////////////////////////////
+
 		if(option::get('user-enable-post-hooks')) {
 			$post = new request\input('post');
 			if(!$post->action) return;
