@@ -293,13 +293,16 @@ class Surface {
 		// do some special case stuff now that it is render time.
 		$this->RenderDoSpecial();
 
+		// fetch a scope set.
+		$scope = $this->BuildRenderScope();
+
 		// run theme.
 		if($this->Print) {
-			m_require($themepath,array('surface'=>$this));
+			m_require($themepath,$scope);
 			return;
 		} else {
 			ob_start();
-			m_require($themepath,array('surface'=>$this));
+			m_require($themepath,$scope);
 			return ob_get_clean();
 		}
 
@@ -389,6 +392,22 @@ class Surface {
 		);
 	}
 
+	/*//
+	@method private void BuildRenderScope
+	@flags internal
+
+	this will allow other libraries to queue ki to allow them to add elements
+	to the scope automatically for page rendering. for example, if the user
+	library is loaded both $surface and $user will be available in theme files
+	automatically.
+	//*/
+
+	private function BuildRenderScope() {
+		$scope = array('surface' => $this);
+		m\ki::flow('surface-build-render-scope',array(&$scope));
+		return $scope;
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// template subview api ///////////////////////////////////////////////////
 
@@ -403,7 +422,7 @@ class Surface {
 
 	public function Area($area) {
 		$path = dirname($this->GetThemePath()).'/area/'.$area.'.phtml';
-		m_require($path,array('surface'=>$this));
+		m_require($path,$this->BuildRenderScope());
 		return;
 	}
 
