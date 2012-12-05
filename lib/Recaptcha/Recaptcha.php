@@ -6,7 +6,7 @@ namespace m {
 	if(!function_exists('recaptcha_check_answer'))
 	m_require('-/lib/Recaptcha/share/recaptchalib.php');
 
-	class recaptcha {
+	class Recaptcha {
 
 		public function __construct() {
 			$this->PublicKey = option::get('recaptcha-public-key');
@@ -14,11 +14,11 @@ namespace m {
 			return;
 		}
 
-		public function getHTML() {
+		public function GetHTML() {
 			return recaptcha_get_html($this->PublicKey).PHP_EOL;
 		}
 
-		public function isValid() {
+		public function IsValid() {
 			$r = recaptcha_check_answer(
 				$this->PrivateKey,
 				$_SERVER["REMOTE_ADDR"],

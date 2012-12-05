@@ -265,7 +265,7 @@ namespace m {
 
 			// check that the username and email address submitted is not
 			// already in use by another account.
-			$db = new m\database;
+			$db = new m\Database;
 			$olduser = $db->queryf(
 				'SELECT u_alias,u_email FROM m_users WHERE u_alias LIKE "%s" OR u_email LIKE "%s" LIMIT 1;',
 				$input->Username,
@@ -353,7 +353,7 @@ namespace m {
 				$user = false;
 
 				if(m\option::get('user-recaptcha-signup')) {
-					$cap = new m\recaptcha;
+					$cap = new m\Recaptcha;
 					if(!$cap->isValid()) {
 						throw new \Exception('Invalid security code');
 					}
@@ -380,7 +380,7 @@ namespace m {
 				$message->add('Your account has been created and you have been signed in.','success');
 
 				$user->sessionUpdate();
-				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
+				$bye = new m\Request\Redirect(($post->redirect)?($post->redirect):('m://refresh'));
 				$bye->go();
 			}
 		}
@@ -408,7 +408,7 @@ namespace m {
 				$message->add('You have successfully signed in.','success');
 
 				// and refresh or go somewhere.
-				$bye = new m\request\redirect(($post->redirect)?($post->redirect):('m://refresh'));
+				$bye = new m\Request\Redirect(($post->redirect)?($post->redirect):('m://refresh'));
 				$bye->go();
 			}
 		}
@@ -426,7 +426,7 @@ namespace m {
 			}
 
 			// go home.
-			$bye = new m\request\redirect('m://home');
+			$bye = new m\Request\Redirect('m://home');
 			$bye->go();
 		}
 
@@ -495,13 +495,13 @@ namespace m {
 		//////////////////////////////////////////////////////////////////////
 
 		if(option::get('user-enable-post-hooks')) {
-			$post = new request\input('post');
+			$post = new Request\Input('post');
 			if(!$post->action) return;
 
 			// if the user is not signed in register the handlers for sign up
 			// and logging in.
 			if(!$user) ki::queue('m-ready',function(){
-				$post = new request\input('post');
+				$post = new Request\Input('post');
 				if(!$post->action) return;
 
 				switch($post->action) {
@@ -515,7 +515,7 @@ namespace m {
 			// if the user is logged in then register the handler for logging
 			// out.
 			else ki::queue('m-ready',function(){
-				$post = new request\input('post');
+				$post = new Request\Input('post');
 				if(!$post->action) return;
 
 				switch($post->action) {
