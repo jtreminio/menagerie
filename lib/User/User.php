@@ -3,7 +3,7 @@
 namespace m {
 	use \m as m;
 
-	class user extends m\object {
+	class user extends m\Object {
 
 		static $PropertyMap = array(
 			'u_id'            => 'ID',
@@ -70,13 +70,13 @@ namespace m {
 		}
 
 		static function getFromSession($opt=null) {
-			$opt = new m\object($opt,array(
+			$opt = new m\Object($opt,array(
 				'Database' => option::get('m-user-database') or null
 			));
 			$opt->KeepHashes = true;
 
 			// quit if no session data.
-			$cookie = new m\request\input('cookie');
+			$cookie = new m\Request\Input('cookie');
 			if(!$cookie->m_user) return false;
 
 			// quit if invalid session data format.
@@ -132,9 +132,9 @@ namespace m {
 
 				// local appcache. has this been asked for before earlier
 				// during the same process?
-				if(strpos($what,'@')!==false) $user = appcache::get("user-email-{$what}");
-				else if(is_string($what)) $user = appcache::get("user-alias-{$what}");
-				else if(is_int($what)) $user = appcache::get("user-id-{$what}");
+				if(strpos($what,'@')!==false) $user = Appcache::get("user-email-{$what}");
+				else if(is_string($what)) $user = Appcache::get("user-alias-{$what}");
+				else if(is_int($what)) $user = Appcache::get("user-id-{$what}");
 
 				if($user) {
 					$user->FromCache = true;
@@ -162,7 +162,7 @@ namespace m {
 			//. dirty data, so dumping a username from straight post data will
 			//. still end up being cleaned up by the database library to not
 			//. can has injection.
-			$db = new m\database($opt->Database);
+			$db = new m\Database($opt->Database);
 			$who = $db->queryf(
 				"SELECT * FROM m_users WHERE {$where} LIMIT 1;",
 				$what

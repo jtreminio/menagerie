@@ -1,13 +1,13 @@
 <?php
 
-namespace m\database\drivers {
+namespace m\Database\Drivers {
 	use \m as m;
 
-	class mysqli extends m\database\driver {
+	class MySQLi extends m\Database\Driver {
 
 		public $dbp = null;
 
-		public function connect($config) {
+		public function Connect($config) {
 
 			$this->dbp = new \MySQLi(
 				$config->hostname,
@@ -24,7 +24,7 @@ namespace m\database\drivers {
 			return true;
 		}
 
-		public function disconnect() {
+		public function Disconnect() {
 			if(is_object($this->dbp)) {
 				$this->dbp->close();
 			}
@@ -33,29 +33,30 @@ namespace m\database\drivers {
 			return;
 		}
 
-		public function escape($input) {
+		public function Escape($input) {
 			return $this->dbp->real_escape_string($input);
 		}
 
-		public function id() {
+		public function ID() {
 			return $this->dbp->insert_id;
 		}
 
-		public function query($sql) {
-			return new mysqli\query($this,$sql);
+		public function Query($sql) {
+			return new MySQLi\Query($this,$sql);
 		}
 
 	}
 
 }
 
-namespace m\database\drivers\mysqli {
+namespace m\Database\Drivers\MySQLi {
 	use \m as m;
 
-	class query extends m\database\query {
+	class Query extends m\Database\Query {
 
-		public $sql;
-		private $result;
+		public $SQL;
+		public $Rows = 0;
+		private $Result;
 
 		public function __construct($driver,$sql) {
 			parent::__construct($driver);
@@ -66,43 +67,43 @@ namespace m\database\drivers\mysqli {
 			// store the compiled sql statement so it can be looked at
 			// during debugging or whatnot. might only want to do this if
 			// a debugging constant is set. dunno.
-			$this->sql = $sql;
+			$this->SQL = $sql;
 
 			// perform the query against the database.
-			$result = $driver->dbp->query($sql);
+			$result = $driver->dbp->Query($sql);
 
 			if(!$result) {
 				// in the case that the query failed somehow. malformed
 				// queries tend do this. that's why the sql property
 				// is there.
-				$this->ok = false;
-				$this->result = false;
-				$this->rows = 0;
+				$this->OK = false;
+				$this->Result = false;
+				$this->Rows = 0;
 			} else {
 				// if the query was successful then we can continue on with
 				// working on the result.
-				$this->ok = true;
-				$this->result = $result;
-				$this->rows = ((is_object($result))?($result->num_rows):(0));
+				$this->OK = true;
+				$this->Result = $result;
+				$this->Rows = ((is_object($result))?($result->num_rows):(0));
 			}
 
 			return;
 		}
 
-		public function free() {
-			if(!is_object($this->result)) return false;
+		public function Free() {
+			if(!is_object($this->Result)) return false;
 
-			$this->result->free();
-			$this->result = null;
+			$this->Result->free();
+			$this->Result = null;
 
 			return true;
 		}
 
-		public function next() {
-			if(!is_object($this->result)) return false;
+		public function Next() {
+			if(!is_object($this->Result)) return false;
 
-			$object = $this->result->fetch_object();
-			if(!$object) $this->free();
+			$object = $this->Result->fetch_object();
+			if(!$object) $this->Free();
 
 			return $object;
 		}

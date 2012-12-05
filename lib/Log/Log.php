@@ -2,7 +2,7 @@
 
 namespace m {
 
-	class log {
+	class Log {
 
 		public $Print = 'cli';
 		public $Filename = null;
@@ -48,8 +48,8 @@ namespace m {
 }
 
 namespace {
-	m\ki::queue('m-setup',function(){
-		m\stash::set('log',new m\log);
+	m\Ki::queue('m-setup',function(){
+		m\Stash::set('log',new m\log);
 		return;
 	});
 }
