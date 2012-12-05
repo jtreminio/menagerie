@@ -4,7 +4,7 @@ namespace m {
 	use \m as m;
 
 	if(!function_exists('recaptcha_check_answer'))
-	m_require('-/lib/recaptcha/share/recaptchalib.php');
+	m_require('-/lib/Recaptcha/share/recaptchalib.php');
 
 	class recaptcha {
 
