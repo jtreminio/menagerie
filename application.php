@@ -71,9 +71,9 @@ function m_autoloader($classname){
 		require_once($filepath);
 
 		if(defined('m\ready')) {
-			m\ki::flow('m-config');
-			m\ki::flow('m-setup');
-//			m\ki::flow('m-ready');
+			m\Ki::flow('m-config');
+			m\Ki::flow('m-setup');
+//			m\Ki::flow('m-ready');
 		}
 
 		return true;
@@ -92,9 +92,9 @@ spl_autoload_register(function($classname){
 	spl_autoload($classname);
 
 	if(defined('m\ready') && class_exists($classname)) {
-		m\ki::flow('m-config');
-		m\ki::flow('m-setup');
-		//m\ki::flow('m-ready');
+		m\Ki::flow('m-config');
+		m\Ki::flow('m-setup');
+		//m\Ki::flow('m-ready');
 	}
 
 	return;
@@ -105,12 +105,12 @@ spl_autoload_register(function($classname){
   // proceed with the rest of the application.
   //*/
 
-m\ki::queue('m-init',function(){
+m\Ki::queue('m-init',function(){
 	if(!session_id()) session_start();
 
-	m_require('-llog');
-	m_require('-lplatform');
-	m_require('-lrequest');
+	m_require('-lLog');
+	m_require('-lPlatform');
+	m_require('-lRequest');
 });
 
 /*// load configuration
@@ -128,22 +128,23 @@ require($configfile);
 // at this point the config file has defined its init block, we have defined
 // our own here. go ahead and flow them both so any super required libraries
 // can get their config and init functions in /before/ the ones below.
-m\ki::flow('m-init');
+m\Ki::flow('m-init');
 
 /*// when configure time...
   // some things to do once it is time to configure.
   //*/
 
-m\ki::queue('m-config',function(){
+m\Ki::queue('m-config',function(){
 
 });
 
-m\ki::queue('m-setup',function(){
+m\Ki::queue('m-setup',function(){
 
 	// attempt to automagically determine the root uri path for the framework
 	// if it was not specified in the config file. setting this will help make
 	// transitions between domain root or subfolders easier on the developer.
 	if(m\platform != 'cli') {
+		/*
 		$rooturi = '/';
 		if(array_key_exists('DOCUMENT_ROOT',$_SERVER)) {
 			list($trash,$rooturi) = explode(
@@ -151,12 +152,13 @@ m\ki::queue('m-setup',function(){
 				m_repath_uri(dirname(__FILE__))
 			);
 		}
-		m\option::define('m-root-uri',rtrim($rooturi,'/'));
+		m\Option::define('m-root-uri',rtrim($rooturi,'/'));
+		*/
 	}
 
 });
 
-m\ki::queue('m-ready',function(){
+m\Ki::queue('m-ready',function(){
 
 	// lets go.
 	define('m\ready',gettimeofday(true));
@@ -171,16 +173,16 @@ m\ki::queue('m-ready',function(){
 // config. things defined in an m-config ki block are for setting
 // values that could be used at any point during an application, but
 // primarily get used by libraries when they...
-m\ki::flow('m-config');
+m\Ki::flow('m-config');
 
 // setup. things defined in an m-setup ki block are for initializing
 // states and setting up any instances that need to be done for the
 // rest of the application.
-m\ki::flow('m-setup');
+m\Ki::flow('m-setup');
 
 // ready. once the framework is ready this ki flows, setting any last
 // late minute values before handing the process over to the
 // application using the framework.
-m\ki::flow('m-ready');
+m\Ki::flow('m-ready');
 
 ?>
