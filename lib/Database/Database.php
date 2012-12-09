@@ -170,11 +170,23 @@ class Database {
 
 		// do a query.
 		$start = microtime(true);
+			$q = $this->Driver->Query($sql);
+		$querytime = microtime(true) - $start;
 
-		$q = $this->Driver->Query($sql);
-
-		$this->Driver->QueryTime += (microtime(true) - $start);
+		$this->Driver->QueryTime += $querytime;
 		$this->Driver->QueryCount++;
+
+		// not sure i really want to keep this like this. but it is good
+		// enough to get past a debugging i need to work through.
+		if($log = m\Option::Get('database-query-log')) {
+			if(is_writable($log)) {
+				$fp = fopen($log,'a');
+				fwrite($fp,sprintf("[%.3f] %s%s",$querytime,trim($sql),PHP_EOL));
+				fclose($fp);
+			} else {
+				throw new \Exception('the query log you want to write is not writable.');
+			}
+		}
 
 		return $q;
 	}
