@@ -1,58 +1,68 @@
 <?php
 
 define('Menagerie',true);
-define('m\root',dirname(__FILE__));
-define('m\timeinit',gettimeofday(true));
+define('MenagerieVersion','1.0.0');
+define('MenagerieTime',1355346883);
 
-/*// core library
-  // the lib that goes right round like a record baby right round
-  // round round.
-  //*/
+////////////////////////////////////////////////////////////////////////////////
+// these constants are flagged case-insensitive just to ease the transition i
+// am making in the codebase. at some future commit they should be set back to
+// case sensitive only.
 
-require(sprintf('%s/application.so.php',m\root));
+define('m\Root',dirname(__FILE__),true);
+define('m\TimeInit',gettimeofday(true),true);
 
+////////////////////////////////////////////////////////////////////////////////
+// core library
 
-/*// autoload step one
-  // allow subdirectories to be used for the class name to help keep
-  // the project folder organized.
-  //*/
+require(sprintf('%s/application.so.php',m\Root));
+
+////////////////////////////////////////////////////////////////////////////////
+// autoloading /////////////////////////////////////////////////////////////////
+
+/*
+the first step in getting autoloading to work is to include the directory which
+contains the framework in the PHP include path. this will enable magic lookups
+of classes for both the menagerie framework and any application libraries you
+namespace nextdoor to m.
+*/
 
 set_include_path(sprintf(
-	// adding the m directory to the include search.
 	'%s%s%s',
 	get_include_path(),
 	PATH_SEPARATOR,
 	dirname(dirname(__FILE__))
 ));
 
+/*
+autoloading step one.
+this custom autoloader will allow for a non-standard loading of classes based
+on a non-standard file system that i decided i wanted. this autoloader will
+handle most of Menagerie's core loading.
+
+lets say you want to load the Database library...
+- $surface = new m\Database;
+- loaded from m/lib/Database/Database.php
+
+this way all libraries can be completely self-contained in the lib directory.
+since the database namespace contains child namespaces for the drivers if i
+decied an app should never have database support i could delete that one
+directory and have it all, rather than having to delete. also third party or
+optional libraries could be distributed as extract and go into the lib directory
+and be easy to remove again later.
+*/
+
 spl_autoload_register('m_autoloader');
 function m_autoloader($classname){
-
-	// custom menagerie autoloader.
-
-	// example: requesting class m\database.
-	// 1) if exists m/lib/database/database.php (Found)
-	// 2) if exists m/lib/database.php          (Secondary)
-	// 3) if exists m/database.php              (PSR-0 Fallback)
-
-	// example: requesting class m\database\driver\mysqli.
-	// 1) if exists m/lib/database/drivers/mysqli/mysqli.php (Not Found)
-	// 2) if exists m/lib/database/drivers/mysqli.php        (Found)
-	// 3) if exists m/database/drivers/mysqli.php            (PSR-0 Fallback)
-
-	// had the mysqli driver been made up of multiple files, then format
-	// #1 would have been the preferred directory structure, but because
-	// it is able to add all its support via one file, the second format
-	// is preferred in this case.
 
 	$classname = str_replace('\\','/',$classname);
 	// ^^^^^ https://bugs.php.net/bug.php?id=60996
 
-	// convert the requested classname m/library
-	// into file path m/lib/library/library.php
+	// given:  m/Library
+	// return: <m\Root>/m/lib/Library/Library.php
 	$filepath = sprintf(
 		'%s%s%s',
-		dirname(m\root),
+		dirname(m\Root),
 		DIRECTORY_SEPARATOR,
 		preg_replace('/^m\//','m/lib/',sprintf(
 			'%s/%s.php',
@@ -61,20 +71,24 @@ function m_autoloader($classname){
 		))
 	);
 
-	// no m/lib/library/library.php?
-	// try m/lib/library.php
+	// if that file did not exist try:
+	// <m\Root>/m/lib/Library.php
 	if(!file_exists($filepath))
 	$filepath = sprintf('%s.php',dirname($filepath));
 
-	// no m/lib/library.php? sadface.
-	if(!file_exists($filepath)) return false;
+	// if that file did not exist, this custom autloader is done.
+	if(!file_exists($filepath))
+	return false;
+
+	// but if it did load it.
 	else {
 		require_once($filepath);
 
-		if(defined('m\ready')) {
+		// if loading a library late then allow it to process any config and
+		// setup hooks it might have contained.
+		if(defined('m\Ready')) {
 			m\Ki::flow('m-config');
 			m\Ki::flow('m-setup');
-//			m\Ki::flow('m-ready');
 		}
 
 		return true;
@@ -82,108 +96,95 @@ function m_autoloader($classname){
 
 }
 
+/*
+autoload step two.
+if the custom autoloader failed to load a class from our custom file system then
+allow falling back to PSR-0 style class loading with PHP's default autoload
+handler.
 
-/*// autoload step two
-  // if the custom autoloader fails allow php to continue on and
-  // attempt the default autoloader that is PSR-0 compliant. may
-  // your deity of choice have mercy on you.
-  //*/
+This autoloader will handle most of the application library loading of classes
+that belong to the project using the framework but not inside of it. this is
+also the reason we modified the include path earlier.
+*/
 
 spl_autoload_register(function($classname){
 	spl_autoload($classname);
 
-	if(defined('m\ready') && class_exists($classname)) {
+	// if loading a library late then allow it to process any config and setup
+	// hooks it might have contained.
+	if(defined('m\Ready') && class_exists($classname)) {
 		m\Ki::flow('m-config');
 		m\Ki::flow('m-setup');
-		//m\Ki::flow('m-ready');
 	}
 
 	return;
 });
 
-/*// when ready...
-  // some things to do once the framework decides it is ready to
-  // proceed with the rest of the application.
-  //*/
+////////////////////////////////////////////////////////////////////////////////
+// init handler ////////////////////////////////////////////////////////////////
 
 m\Ki::queue('m-init',function(){
+
+	// make a session available.
 	if(!session_id()) session_start();
 
+	// require a few of the core Menagerie libraries that provide operational
+	// utility.
+	m_require('-lKi');
 	m_require('-lLog');
 	m_require('-lPlatform');
 	m_require('-lRequest');
-});
-
-/*// load configuration
-  // the application.conf.php file stores all the application specific
-  // options and settings.
-  //*/
-
-$configfile = sprintf('%s/application.conf.php',m\root);
-if(file_exists($configfile))
-require($configfile);
-
-// init. things defined in an m-init ki block should be designed for
-// setting or loading values core to the operation of the framework,
-// and are designed to change how it behaves from the ground up.
-// at this point the config file has defined its init block, we have defined
-// our own here. go ahead and flow them both so any super required libraries
-// can get their config and init functions in /before/ the ones below.
-m\Ki::flow('m-init');
-
-/*// when configure time...
-  // some things to do once it is time to configure.
-  //*/
-
-m\Ki::queue('m-config',function(){
-
-});
-
-m\Ki::queue('m-setup',function(){
-
-	// attempt to automagically determine the root uri path for the framework
-	// if it was not specified in the config file. setting this will help make
-	// transitions between domain root or subfolders easier on the developer.
-	if(m\platform != 'cli') {
-		/*
-		$rooturi = '/';
-		if(array_key_exists('DOCUMENT_ROOT',$_SERVER)) {
-			list($trash,$rooturi) = explode(
-				m_repath_uri($_SERVER['DOCUMENT_ROOT']),
-				m_repath_uri(dirname(__FILE__))
-			);
-		}
-		m\Option::define('m-root-uri',rtrim($rooturi,'/'));
-		*/
-	}
-
-});
-
-m\Ki::queue('m-ready',function(){
-
-	// lets go.
-	define('m\ready',gettimeofday(true));
 
 	return;
 });
 
-/*// init train
-  // flow some ki to allow libraries to setup as they need.
-  //*/
+////////////////////////////////////////////////////////////////////////////////
+// config handler //////////////////////////////////////////////////////////////
 
-// config. things defined in an m-config ki block are for setting
-// values that could be used at any point during an application, but
-// primarily get used by libraries when they...
+// m\Ki::queue('m-config',function(){ });
+
+////////////////////////////////////////////////////////////////////////////////
+// setup handler ///////////////////////////////////////////////////////////////
+
+// m\Ki::queue('m-setup',function(){ });
+
+////////////////////////////////////////////////////////////////////////////////
+// ready handler ///////////////////////////////////////////////////////////////
+
+m\Ki::queue('m-ready',function(){
+	define('m\Ready',gettimeofday(true),true);
+	return;
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// application config file /////////////////////////////////////////////////////
+
+// applications may configure themselves by setting whatever values are needed
+// in the application.conf.php file.
+$configfile = sprintf('%s/application.conf.php',m\Root);
+
+if(file_exists($configfile))
+require($configfile);
+
+////////////////////////////////////////////////////////////////////////////////
+// ki train ////////////////////////////////////////////////////////////////////
+
+// m-init.
+// core initialization ki for the framework. mostly should be used only for
+// loading additional libraries.
+m\Ki::flow('m-init');
+
+// m-config.
+// allow libraries which have been loaded to configure themselves with default
+// values or register options that they may have.
 m\Ki::flow('m-config');
 
-// setup. things defined in an m-setup ki block are for initializing
-// states and setting up any instances that need to be done for the
-// rest of the application.
+// m-setup.
+// used by libraries to setup any instances of objects that may be used by the
+// application. for example the m\User library would use this time to see if a
+// user is logged in and store that user in the Stash for later use.
 m\Ki::flow('m-setup');
 
-// ready. once the framework is ready this ki flows, setting any last
-// late minute values before handing the process over to the
-// application using the framework.
+// m-ready.
+// a notification that we are ready to roll.
 m\Ki::flow('m-ready');
-
-?>
