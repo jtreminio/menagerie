@@ -99,15 +99,15 @@ namespace m {
 		// cache methods /////////////////////////////////////////////////////
 
 		public function cacheUpdate() {
-			appcache::set("user-id-{$this->ID}",$this);
-			appcache::set("user-alias-{$this->Alias}",$this);
-			appcache::set("user-email-{$this->Email}",$this);
+			Appcache::Set("user-id-{$this->ID}",$this);
+			Appcache::set("user-alias-{$this->Alias}",$this);
+			Appcache::Set("user-email-{$this->Email}",$this);
 		}
 
 		public function cacheDestroy() {
-			appcache::drop("user-id-{$this->ID}",$this);
-			appcache::drop("user-alias-{$this->Alias}",$this);
-			appcache::drop("user-email-{$this->Email}",$this);
+			Appcache::Drop("user-id-{$this->ID}",$this);
+			Appcache::Drop("user-alias-{$this->Alias}",$this);
+			Appcache::Drop("user-email-{$this->Email}",$this);
 		}
 
 		//////////////////////////////////////////////////////////////////////
@@ -118,10 +118,10 @@ namespace m {
 
 			$opt = new m\object($opt,array(
 				'KeepHashes'       => false,
-				'Database'         => option::get('m-user-database') or null,
+				'Database'         => Option::Get('m-user-database') or null,
 				'ReadCache'        => true,
 				'WriteCache'       => true,
-				'ExtendedClass'    => option::get('user-class-extended'),
+				'ExtendedClass'    => Option::Get('user-class-extended'),
 				'UseExtendedClass' => true
 			));
 
@@ -132,9 +132,9 @@ namespace m {
 
 				// local appcache. has this been asked for before earlier
 				// during the same process?
-				if(strpos($what,'@')!==false) $user = Appcache::get("user-email-{$what}");
-				else if(is_string($what)) $user = Appcache::get("user-alias-{$what}");
-				else if(is_int($what)) $user = Appcache::get("user-id-{$what}");
+				if(strpos($what,'@')!==false) $user = Appcache::Get("user-email-{$what}");
+				else if(is_string($what)) $user = Appcache::Get("user-alias-{$what}");
+				else if(is_int($what)) $user = Appcache::Get("user-id-{$what}");
 
 				if($user) {
 					$user->FromCache = true;
