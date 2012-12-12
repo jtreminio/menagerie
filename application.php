@@ -1,5 +1,6 @@
 <?php
 
+define('Menagerie',true);
 define('m\root',dirname(__FILE__));
 define('m\timeinit',gettimeofday(true));
 
