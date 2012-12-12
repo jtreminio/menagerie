@@ -1,18 +1,60 @@
 <?php
 
+/*//
+@package CLI
+@project Menagerie
+@version 1.0.0
+@author Bob Majdak Jr <bob@theorangehat.net>
+//*/
+
+/*//
+@namespace m
+@extern
+//*/
+
 namespace m;
 
 ////////////////////////////////////////////////////////////////////////////////
 // dependencies ////////////////////////////////////////////////////////////////
 
-m_require('-lplatform');
+m_require('-lPlatform');
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+/*//
+@class CLI
+
+provides an OOP interface to the command line options that were provided if
+this script was run by the command line, also provides some basic interface
+for doing common cliney things like ending the script and CLI detection.
+
+the class provides query access to command line options.
+
+if launched with:
+* php script.php --option=yes
+
+then an cli object will provide query access:
+* if($cli->option === 'yes') ...
+
+//*/
 
 class CLI {
 
+	/*//
+	@property public argv
+	stores all the arguments from the command line that were presented in the
+	format of an option, like "--option=value"
+	//*/
+
 	public $argv = array();
+
+	/*//
+	@property public args
+	stores a list of all the left over arguments that did not fit the valid
+	option format.
+	//*/
+
 	public $args = array();
 
 	///////////////////////////////////////////////////////////////////////////
@@ -20,7 +62,6 @@ class CLI {
 
 	public function __construct() {
 		$this->parseArguments();
-
 		return;
 	}
 
@@ -42,6 +83,22 @@ class CLI {
 	public function Exists($key) {
 		return array_key_exists($key,$this->argv);
 	}
+
+	/*//
+	@method public Shutdown
+
+	shuts down the cli application.
+
+	if given as arguments:
+	* int errno
+	  shuts down with that err code.
+
+	* string errmsg
+	  shuts down printing that message to the terminal.
+
+	* int errno, string errmsg
+	  shuts down with that err code and printing that message to the screen.
+	//*/
 
 	public function Shutdown() {
 		$argv = func_get_args();
@@ -83,6 +140,13 @@ class CLI {
 		exit($errno);
 	}
 
+	/*//
+	@method protected void ParseArguments
+
+	reads the arguments from the command line and generates the data sets
+	that allow for query access to options.
+	//*/
+
 	protected function ParseArguments() {
 		if(!array_key_exists('argv',$_SERVER)) return;
 		if(!is_array($_SERVER['argv'])) return;
@@ -107,9 +171,23 @@ class CLI {
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
+	/*//
+	@method static boolean Is
+
+	returns if the script was launched from the command line interface as
+	detected by the platform library.
+	//*/
+
 	static function Is() {
-		return stash::get('platform')->cli;
+		return Stash::Get('platform')->CLI;
 	}
+
+	/*//
+	@method static void Only
+
+	will shut down a script if it was not launched from the CLI. useful if you
+	do something weird like have cli scripts in your public directory...
+	//*/
 
 	static function Only() {
 		if(!self::Is()) exit(0);
