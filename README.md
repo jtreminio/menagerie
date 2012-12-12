@@ -5,6 +5,12 @@ Lightweight PHP 5.4 Namespaced Framework
 
 --------------------------------
 
+Note: I am currently working within the PascalCaseRefactor branch, so
+the master branch may appear stale for the time being even though that
+is not the case.
+
+--------------------------------
+
 This project is Pre-Alpha. That means I can change what I want when I
 want and there is nothing you can do about it. Current projections have
 me going Beta (and therefore, being mostly stable) this August.
