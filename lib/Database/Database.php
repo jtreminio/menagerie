@@ -1,7 +1,28 @@
 <?php
 
+/*//
+@package Database
+@project Menagerie
+@version 1.0.0
+@author Bob Majdak Jr <bob@theorangehat.net>
+//*/
+
+/*//
+@namespace m
+@extern
+//*/
+
 namespace m;
 use \m as m;
+
+/*//
+@class Database
+
+provides connection and query access to various database sources. also maintains
+connections throughout an application instance so that they can be reused rather
+than waste time/resources establishing new connections every time a new instance
+of this query interface is created.
+//*/
 
 class Database {
 
