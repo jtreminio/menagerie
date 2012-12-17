@@ -205,9 +205,9 @@ class Surface {
 	///////////////////////////////////////////////////////////////////////////
 
 	public function __construct($input=null) {
-		$opt = new m\object($input,array(
-			'Theme' => option::get('surface-theme'),
-			'Style' => option::get('surface-style'),
+		$opt = new m\Object($input,array(
+			'Theme' => Option::Get('surface-theme'),
+			'Style' => Option::Get('surface-style'),
 			'Print' => true,
 			'Capture' => false
 		));
