@@ -12,7 +12,8 @@ namespace m\request {
 		public function __construct($which,$opt=null) {
 			$this->opt = new m\object($opt,array(
 				'trim'     => false,
-				'pathable' => false
+				'pathable' => false,
+				'htmlify'  => false
 			));
 
 			if(!is_array($which)) {
@@ -69,7 +70,7 @@ namespace m\request {
 		}
 
 		public function exists($key) {
-			if(is_array($this->var) AND array_key_exists($key,$this->var)) return true;
+			if(is_array($this->var) && array_key_exists($key,$this->var)) return true;
 			else	return false;
 		}
 
@@ -89,6 +90,7 @@ namespace m\request {
 		protected function filter($input) {
 			if($this->opt->trim) $input = trim($input);
 			if($this->opt->pathable) $input = m\request::pathable($input,true);
+			if($this->opt->htmlify) $input = htmlentities($input);
 			return $input;
 		}
 
