@@ -5,9 +5,8 @@ Lightweight PHP 5.4 Namespaced Framework
 
 --------------------------------
 
-Note: I am currently working within the PascalCaseRefactor branch, so
-the master branch may appear stale for the time being even though that
-is not the case.
+Note: I just merged in a huge branch that was the PascalCaseRefactor so
+if it broke... I uh. Oops.
 
 --------------------------------
 
