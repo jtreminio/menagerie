@@ -185,7 +185,7 @@ namespace {
 			if(preg_match('/^-\//',$__m_filename)) {
 				$__m_filename = m_repath_fs(preg_replace(
 					'/^-\//',
-					sprintf('%s/',m\Root),
+					sprintf('%s/',m\FrameworkRoot),
 					$__m_filename
 				));
 			}
