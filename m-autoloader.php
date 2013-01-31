@@ -107,7 +107,7 @@ function m_autoloader($classname){
 		require_once($filepath);
 
 		// stop now if the class was not loaded by the inclusion of this file.
-		// btw, this means your code is bad.
+		// btw, this means you are bad and you should feel bad.
 		if(!class_exists($classname)) return false;
 
 		// if loading a library late then allow it to process any config and
