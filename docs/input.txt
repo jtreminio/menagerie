@@ -1,3 +1,0 @@
-m/lib/surface/*.php
-m/lib/docbook/*.php
-m/lib/docbook/Tags/*.php
