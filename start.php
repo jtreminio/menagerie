@@ -22,8 +22,6 @@ m_require('-/m-error-handling.php');
 
 m\Option::Define(array(
 	// core framework options.
-	'menagerie-autoloader'     => true,
-	'menagerie-error-handler'  => true,
 	'menagerie-error-verbose'  => true,
 
 	// application base options.
