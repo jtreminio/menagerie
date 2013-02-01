@@ -66,10 +66,13 @@ class Object {
 
 		//. initialize the object with the input data, running the input
 		//. by the property map first if need be.
+		if(is_object($input)) $input = clone($input);
 		if(is_array($input)) $input = (object)$input;
 		if(is_object($input)) {
 			if(count(static::$PropertyMap))
 			$this->InputApplyMap($input);
+
+			$this->InputProperties($input,true);
 		}
 
 		//. set any default properties that may have been missing from
@@ -98,8 +101,10 @@ class Object {
 	protected function InputApplyMap($input) {
 
 		foreach(static::$PropertyMap as $old => $new)
-			if(property_exists($input,$old))
-				$this->{$new} = $input->{$old};
+			if(property_exists($input,$old)) {
+				$input->{$new} = $input->{$old};
+				unset($input->{$old});
+			}
 
 		return;
 	}
