@@ -126,7 +126,7 @@ class Database {
 		$this->Reused = false;
 
 		//. get the database configuration from the option api.
-		$config = Option::Get('m-database');
+		$config = Option::Get('database-connections');
 		if(!$config or !is_array($config))
 			throw new \Exception('database configuration is nowhere near valid');
 
