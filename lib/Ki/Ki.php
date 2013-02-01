@@ -75,6 +75,7 @@ class Ki {
 
 		$count = 0;
 		foreach(self::$Queue[$key] as $iter => $ki) {
+			array_unshift($argv,$key);
 			$ki->Exec($argv);
 
 			if(!$ki->Persist)
