@@ -95,7 +95,7 @@ that the class could not be loaded it will throw an exception. it can be
 given either a single class name as a string, or an array of them.
 //*/
 
-function m_load($input) {
+function m_load_class($input) {
 	if(is_string($input))
 	$input = array($input);
 
@@ -172,7 +172,7 @@ function m_require($__m_filename,$__m_scope=null) {
 
 		// support loading via the autoloading mechanism.
 		if(preg_match('/^-l\h?(.+?)$/',$__m_filename,$match)) {
-			return m_load("m\\{$match[1]}");
+			return m_load_class("m\\{$match[1]}");
 		}
 
 		// support some shorthand for referencing files from where the
