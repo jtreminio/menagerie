@@ -3,7 +3,7 @@
 /*//
 @package Database
 @project Menagerie
-@version 1.0.0
+@version 1.0.1
 @author Bob Majdak Jr <bob@theorangehat.net>
 //*/
 
@@ -14,6 +14,21 @@
 
 namespace m;
 use \m as m;
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+Ki::Queue('m-config',function(){
+	Option::Define([
+		'database-connections' => [],
+		'database-log-queries' => false
+	]);
+
+	return;
+});
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 /*//
 @class Database
@@ -42,6 +57,14 @@ class Database {
 	//*/
 
 	private $Driver;
+
+	/*//
+	@property private Boolean Reused
+	marks if the connection is being reused from a previous instance or not.
+	not really important other than for seeing that the connection cache is
+	working.
+	//*/
+
 	private $Reused;
 
 	///////////////////////////////////////////////////////////////////////////
@@ -84,33 +107,14 @@ class Database {
 	private function LoadDriver($name,$config) {
 		$driver = "m\\Database\\Drivers\\{$config->driver}";
 
-		//. the PSR-0 autoloader should handle the driver being loaded
-		//. when we ask for it like this.
+		try { m_load_class($driver); }
+		catch(Exception $e) { return false; }
 
-		if(!class_exists($driver,true)) {
-			return false;
-		} else {
-			$this->Driver = new $driver($name,$config);
-			return true;
-		}
+		return true;
 	}
 
-
-	/*// Public Database API.
-	  // The methods you will use to interact with the database.
-	  //*/
-
-	/* database->__construct(string config);
-	 *
-	 * when a new database instance is created a new database connection
-	 * will be created using the parameters defined from the application
-	 * configuration file, and the entry in it specified.
-	 *
-	 * connections are held open by the database class in a static list
-	 * so that if another database instance is created later, the
-	 * database connection will be reused instead of recreated.
-	 *
-	 */
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 
 	public function __construct($which=null) {
 		if(!$which) $which = 'default';
@@ -167,6 +171,17 @@ class Database {
 		return call_user_func_array(array($this->Driver,$func),$argv);
 	}
 
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
+	/*//
+	@method public m\DatabaseQuery Queryf
+	@arg string format
+
+	perform a query against the current database and return an object that
+	defines the status of the query result.
+	//*/
+
 	public function Queryf($fmt) {
 		$argv = func_get_args();
 		unset($argv[0]);
@@ -189,24 +204,23 @@ class Database {
 		// compile the finished query string.
 		$sql = vsprintf($fmt,$argv);
 
-		// do a query.
+		// do a query tracking the time it took.
 		$start = microtime(true);
-			$q = $this->Driver->Query($sql);
+		$q = $this->Driver->Query($sql);
 		$querytime = microtime(true) - $start;
 
+		// account for the query and time.
 		$this->Driver->QueryTime += $querytime;
 		$this->Driver->QueryCount++;
 
-		// not sure i really want to keep this like this. but it is good
-		// enough to get past a debugging i need to work through.
-		if($log = m\Option::Get('database-query-log')) {
-			if(is_writable($log)) {
-				$fp = fopen($log,'a');
-				fwrite($fp,sprintf("[%.3f] %s%s",$querytime,trim($sql),PHP_EOL));
-				fclose($fp);
-			} else {
-				throw new \Exception('the query log you want to write is not writable.');
-			}
+		// log the query.
+		if(Option::Get('database-log-queries')) {
+			Ki::Flow('log-debug',sprintf(
+				"{%.3f} %s%s",
+				$querytime,
+				trim($sql),
+				PHP_EOL
+			));
 		}
 
 		return $q;
