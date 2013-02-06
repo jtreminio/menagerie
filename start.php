@@ -37,7 +37,7 @@ m\Option::Define(array(
 	'menagerie-core-library'  => [],
 
 	// logging options,
-	'log-filename' => m_repath_fs(sprintf('%s/menagerie.log',m\FrameworkRoot)),
+	'log-filename' => m_repath_fs(sprintf('%s/log/menagerie.log',m\FrameworkRoot)),
 	'log-events'   => ['log-debug','log-info'],
 	'log-format'   => m\Log::TEXT,
 
