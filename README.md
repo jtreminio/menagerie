@@ -1,22 +1,8 @@
 Menagerie
 ================================
 
-Lightweight PHP 5.4 Namespaced Framework
+ * Lightweight PHP 5.4 Namespaced Framework
 
---------------------------------
-
-Note: I just merged in a huge branch that was the PascalCaseRefactor so
-if it broke... I uh. Oops.
-
---------------------------------
-
-This project is Pre-Alpha. That means I can change what I want when I
-want and there is nothing you can do about it. Current projections have
-me going Beta (and therefore, being mostly stable) this August.
-
-* http://catch404.net/projects/menagerie/
-
---------------------------------
 
 Authors
 --------------------------------
@@ -63,5 +49,4 @@ Third Party Software
 This is a list of the "specific listed components" which were mentioned
 above which may have their own licenses.
 
- * reCAPTCHA PHP Library
-   See the m/lib/recaptcha/share directory for more info.
+ * none yet
