@@ -13,13 +13,8 @@ if(m\Option::Get('menagerie-router-magic')) {
 	// should not be accessed since namespaces do not support any syntax like
 	// the ..\ etc.
 	$class = "{$namespace}\\{$request->RouteName}";
+	m_load_class($class); // throws an exception on failure.
 
-	try { m_load_class($class); }
-	catch(Exception $e) {
-		throw new \Exception(
-		"Unable to find a route controller for `{$request->RouteName}`."
-		);
-	}
 
 	// test that the class is somehow a subclass of our request router so that
 	// we can trust it can do what it needs to do.
