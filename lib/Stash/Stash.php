@@ -95,14 +95,11 @@ final class Stash {
 	//*/
 
 	static function Destroy($key) {
-		if(self::Has($key)) {
-			unset(self::$Instances[$key]);
-		}
+
+		if(self::Has($key))
+		unset(self::$Instances[$key]);
 
 		return;
 	}
 
 }
-
-
-?>
