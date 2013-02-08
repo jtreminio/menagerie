@@ -22,19 +22,22 @@ m_require('-/m-error-handling.php');
 ////////////////////////////////////////////////////////////////////////////////
 // configuration file //////////////////////////////////////////////////////////
 
-if(!defined('MenagerieConfig'))
-m_require('-/menagerie.conf.php');
+m_define('MenagerieConfig','-/menagerie.conf.php');
 
-else
-m_require(MenagerieConfig);
+if(!m_require(MenagerieConfig))
+throw new \Exception('unable to load config file');
 
 ////////////////////////////////////////////////////////////////////////////////
 // default settings ////////////////////////////////////////////////////////////
 
 m\Option::Define(array(
 	// core framework options.
-	'menagerie-error-verbose' => false,
-	'menagerie-core-library'  => [],
+	'menagerie-error-verbose'    => false,
+	'menagerie-core-library'     => [],
+	'menagerie-router-magic'     => true,
+	'menagerie-router-type'      => 'GET',
+	'menagerie-router-key'       => 'm-route',
+	'menagerie-router-namespace' => null,
 
 	// logging options,
 	'log-filename' => m_repath_fs(sprintf('%s/log/menagerie.log',m\FrameworkRoot)),
@@ -80,8 +83,18 @@ m\Ki::Flow('m-config');
 m\Ki::Flow('m-setup');
 m\Ki::Flow('m-ready');
 
+/*
+m\Ki::Queue('m-main',function(){
+	$surface = m\Stash::Get('surface');
+	$surface->Set('test','value');
+
+	echo 'this is the app code lol';
+	return;
+});
+
 // the main event
 m\Ki::Flow('m-main');
 
 // shutdown events
 m\Ki::Flow('m-shutdown');
+*/
