@@ -10,7 +10,7 @@ m\Ki::Queue('m-init',function(){
 	$file = m\Option::Get('log-filename');
 	$events = m\Option::Get('log-events');
 	$format = m\Option::Get('log-format');
-	if(!is_array($events) || !count($events)) return;
+	if(!file || !is_array($events) || !count($events)) return;
 
 	m\Stash::Set('log',($log = new m\Log([
 		'Filename' => $file,
@@ -33,11 +33,11 @@ set_exception_handler(function($e){
 	$verbose = m\Option::Get('menagerie-error-verbose');
 
 	if($verbose) {
-		echo 'An error is preventing normal operations.', PHP_EOL;
+		echo 'An error is preventing normal operations. (Verbose).', PHP_EOL;
 		echo $e;
 	} else {
-		echo 'An error is preventing normal operations.';
+		echo 'An error is preventing normal operations. (Silent).';
 	}
 
-	return false;
+	return;
 });

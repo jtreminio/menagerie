@@ -10,6 +10,21 @@ the application. the stash is designed to hold objects of importance that should
 only ever exist once (e.g. singletons).
 //*/
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+Ki::Queue('m-shutdown',function(){
+
+	foreach(array_keys(Stash::$Instances) as $key) {
+		Stash::Destroy($key);
+	}
+
+	return;
+});
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 final class Stash {
 
 	/*//
@@ -81,11 +96,6 @@ final class Stash {
 
 	static function Destroy($key) {
 		if(self::Has($key)) {
-			if(is_object(self::$Instances[$key])){
-				if(is_callable([self::$Instances[$key],'__destruct']))
-				self::$Instances[$key]->__destruct();
-			}
-
 			unset(self::$Instances[$key]);
 		}
 

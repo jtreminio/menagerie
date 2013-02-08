@@ -33,12 +33,12 @@ m_require(MenagerieConfig);
 
 m\Option::Define(array(
 	// core framework options.
-	'menagerie-error-verbose' => true,
+	'menagerie-error-verbose' => false,
 	'menagerie-core-library'  => [],
 
 	// logging options,
 	'log-filename' => m_repath_fs(sprintf('%s/log/menagerie.log',m\FrameworkRoot)),
-	'log-events'   => ['log-debug','log-info'],
+	'log-events'   => ['log-debug','log-warning','log-info'],
 	'log-format'   => m\Log::TEXT,
 
 	// application base options.
@@ -69,7 +69,19 @@ m\Ki::Queue('m-init',function(){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+ini_set('auto_append_file',m_repath_fs(sprintf('%s/shutdown.php',m\FrameworkRoot)));
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+// startup events
 m\Ki::Flow('m-init');
 m\Ki::Flow('m-config');
 m\Ki::Flow('m-setup');
 m\Ki::Flow('m-ready');
+
+// the main event
+m\Ki::Flow('m-main');
+
+// shutdown events
+m\Ki::Flow('m-shutdown');
