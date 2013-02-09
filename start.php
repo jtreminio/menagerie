@@ -34,6 +34,8 @@ m\Option::Define(array(
 	// core framework options.
 	'menagerie-error-verbose'    => false,
 	'menagerie-core-library'     => [],
+
+	// router options.
 	'menagerie-router-magic'     => true,
 	'menagerie-router-type'      => 'GET',
 	'menagerie-router-key'       => 'm-route',
@@ -72,29 +74,18 @@ m\Ki::Queue('m-init',function(){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-ini_set('auto_append_file',m_repath_fs(sprintf('%s/shutdown.php',m\FrameworkRoot)));
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
 // startup events
 m\Ki::Flow('m-init');
 m\Ki::Flow('m-config');
 m\Ki::Flow('m-setup');
 m\Ki::Flow('m-ready');
 
-/*
-m\Ki::Queue('m-main',function(){
-	$surface = m\Stash::Get('surface');
-	$surface->Set('test','value');
+if(m\Option::Get('menagerie-router-enable')) {
+	// magic route.
+	$router = new m\Reques\Router;
+	$router->Execute();
 
-	echo 'this is the app code lol';
-	return;
-});
-
-// the main event
-m\Ki::Flow('m-main');
-
-// shutdown events
-m\Ki::Flow('m-shutdown');
-*/
+	// shutdown.
+	m\Ki::Flow('m-shutdown');
+	exit(0);
+}

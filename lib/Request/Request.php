@@ -22,10 +22,13 @@ class Request {
 		switch(Option::Get('menagerie-router-type')) {
 			case 'GET': {
 				$routekey = Option::Get('menagerie-router-key');
-				if(!array_key_exists($routekey,$_GET))
-				throw new \Exception('no route key in get - unable to determine route');
 
-				$uri = trim(trim($_GET[$routekey]),'/');
+				// if there is no route key then assume we want the main
+				// index, because get can be like that.
+				if(!array_key_exists($routekey,$_GET)) $uri = '';
+
+				$uri = $_GET[$routekey];
+				unset($routekey);
 				break;
 			}
 
@@ -33,22 +36,28 @@ class Request {
 				if(!array_key_exists('REQUEST_URI',$_SERVER))
 				throw new \Exception('no request uri - unable to determine route');
 
-				$uri = trim(trim($_SERVER['REQUEST_URI']),'/');
+				$uri = $_SERVER['REQUEST_URI'];
 				break;
 			}
 		}
 
+		// clean up the input.
+		$uri = trim($uri);
+
+		// detect index requests.
 		if(!$uri || $uri == '/') {
 			$this->RouteName = 'Index';
 			return;
 		}
 
+		// broken requests to index.
 		$path = explode('/',$uri);
 		if(!count($path)) {
 			$this->RouteName = 'Index';
 			return;
 		}
 
+		// final request name cleanup.
 		$this->RouteName = self::PathableToRoutable($path[0]);
 		return;
 	}
