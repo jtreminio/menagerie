@@ -71,21 +71,22 @@ m\Ki::Queue('m-init',function(){
 	return;
 });
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-// startup events
-m\Ki::Flow('m-init');
-m\Ki::Flow('m-config');
-m\Ki::Flow('m-setup');
-m\Ki::Flow('m-ready');
-
-if(m\Option::Get('menagerie-router-enable')) {
+if(m\Option::Get('menagerie-router-enable'))
+m\Ki::Queue('m-main',function(){
 	// magic route.
-	$router = new m\Reques\Router;
+	$router = new m\Request\Router;
 	$router->Execute();
 
 	// shutdown.
 	m\Ki::Flow('m-shutdown');
 	exit(0);
-}
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// mainline ki flows ///////////////////////////////////////////////////////////
+
+m\Ki::Flow('m-init');
+m\Ki::Flow('m-config');
+m\Ki::Flow('m-setup');
+m\Ki::Flow('m-ready');
+m\Ki::Flow('m-main');

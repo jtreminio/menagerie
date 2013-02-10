@@ -65,8 +65,40 @@ class Request {
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	static function PathableToRoutable($uri) {
-		return str_replace(' ','',ucwords(str_replace('-',' ',$uri)));
+	/*//
+	@method static string Pathable
+	@arg string Input
+	clean the input string to make it safe for URI segments.
+	//*/
+
+	static function Pathable($input) {
+		return preg_replace('/[^a-z0-9-]/i','',$input);
+	}
+
+	/*//
+	@method static string Routable
+	@arg string Input
+	clean the input string to make it safe for routable class lookups.
+	//*/
+
+	static function Routable($input) {
+		return preg_replace('/[^a-z0-9_]/i','',$input);
+	}
+
+	/*//
+	@method static string PathableToRoutable
+	@arg string Input
+	convert the input string from a pathable format to a routable format.
+	//*/
+
+	static function PathableToRoutable($input) {
+		return
+		self::Routable(
+		str_replace(' ','',
+		ucwords(
+		str_replace('-',' ',
+		self::Pathable($input)
+		))));
 	}
 
 }
