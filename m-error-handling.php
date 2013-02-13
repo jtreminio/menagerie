@@ -1,25 +1,16 @@
 <?php
 
-/*
-setting up application logging.
+m\Ki::Queue('m-setup',function(){
+	$logdefs = m\Option::Get('menagerie-log-files');
+	$logs = array();
 
-create the logging instance for writing messages to the debugging log.
-*/
+	foreach($logdefs as $logfile => $def)
+	$logs[] = new m\Log($def);
 
-m\Ki::Queue('m-init',function(){
-	$file = m\Option::Get('log-filename');
-	$events = m\Option::Get('log-events');
-	$format = m\Option::Get('log-format');
-	if(!file || !is_array($events) || !count($events)) return;
-
-	m\Stash::Set('log',($log = new m\Log([
-		'Filename' => $file,
-		'Events'   => $events,
-		'Format'   => $format
-	])));
-
+	m\Stash::Set('logs',$logs);
 	return;
 });
+
 
 /*
 default exception handler.

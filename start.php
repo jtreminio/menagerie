@@ -40,15 +40,24 @@ m\Option::Define(array(
 	'menagerie-web-uri'          => '/',
 
 	// router options.
-	'menagerie-router-magic'     => true,
+	'menagerie-router-enable'     => true,
 	'menagerie-router-type'      => 'GET',
 	'menagerie-router-key'       => 'm-route',
 	'menagerie-router-namespace' => null,
 
 	// logging options,
-	'log-filename' => m_repath_fs(sprintf('%s/log/menagerie.log',m\FrameworkRoot)),
-	'log-events'   => ['log-debug','log-warning','log-info'],
-	'log-format'   => m\Log::TEXT,
+	'menagerie-log-files' => [
+		'menagerie' => [
+			'Filename' => sprintf('%s/log/menagerie.log',m\FrameworkRoot),
+			'Events' => ['log-debug','log-warning','log-info'],
+			'Format' => m\Log::TEXT
+		],
+		'request' => [
+			'Filename' => sprintf('%s/log/request-%s.log',m\FrameworkRoot,date('Ymd')),
+			'Events' => ['log-request'],
+			'Format' => m\Log::TEXT
+		]
+	],
 
 	// application base options.
 	'app-name'       => 'Menagerie',
