@@ -35,6 +35,10 @@ m\Option::Define(array(
 	'menagerie-error-verbose'    => false,
 	'menagerie-core-library'     => [],
 
+	'menagerie-app-root'         => '/',
+	'menagerie-web-root'         => '/www',
+	'menagerie-web-uri'          => '/',
+
 	// router options.
 	'menagerie-router-magic'     => true,
 	'menagerie-router-type'      => 'GET',

@@ -25,9 +25,9 @@ class Request {
 
 				// if there is no route key then assume we want the main
 				// index, because get can be like that.
-				if(!array_key_exists($routekey,$_GET)) $uri = '';
+				if(!array_key_exists($routekey,$_GET)) $request = '';
 
-				$uri = $_GET[$routekey];
+				$request = $_GET[$routekey];
 				unset($routekey);
 				break;
 			}
@@ -36,22 +36,22 @@ class Request {
 				if(!array_key_exists('REQUEST_URI',$_SERVER))
 				throw new \Exception('no request uri - unable to determine route');
 
-				$uri = $_SERVER['REQUEST_URI'];
+				$request = $_SERVER['REQUEST_URI'];
 				break;
 			}
 		}
 
 		// clean up the input.
-		$uri = trim($uri);
+		$request = trim(trim($request),'/');
 
 		// detect index requests.
-		if(!$uri || $uri == '/') {
+		if(!$request || $request == '/') {
 			$this->RouteName = 'Index';
 			return;
 		}
 
 		// broken requests to index.
-		$path = explode('/',$uri);
+		$path = explode('/',$request);
 		if(!count($path)) {
 			$this->RouteName = 'Index';
 			return;
@@ -92,6 +92,13 @@ class Request {
 	//*/
 
 	static function PathableToRoutable($input) {
+
+		// make sure the input was pathable.
+		// replace dashes with spaces.
+		// camel case the input.
+		// remove the spaces.
+		// make sure the input is routable.
+
 		return
 		self::Routable(
 		str_replace(' ','',
